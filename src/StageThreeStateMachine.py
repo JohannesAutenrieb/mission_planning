@@ -1,6 +1,6 @@
 from statemachine import StateMachine, State
 
-class StageOneStateMachine(StateMachine):
+class StageThreeStateMachine(StateMachine):
 
     # Defined States in the Mission State Machine
     hoverAtCurrentPosition = State('hoverAtCurrentPosition', initial=True)
@@ -52,6 +52,6 @@ class StageOneStateMachine(StateMachine):
         
 
 # Class to manage the states better 
-class MissionState(object):
+class StageThreeState(object):
     def __init__(self, state):
         self.state = state

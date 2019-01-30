@@ -1,7 +1,7 @@
-from MissionStateMachine import MissionStateMachine, MissionState
+from StageOneStateMachine import StageOneStateMachine, StageOneState
 import time
 
-def main():
+def StageOne():
 
     #----------------------------------------------------------------------
     # Init: Create relevant Objects and global Variables
@@ -10,20 +10,31 @@ def main():
     # take initial time
     start = time.time()
     #State object to handle the states with initial state one
-    obj = MissionState(state='stageOne')
+    obj = StageOneState(state='startMotor')
     #state machine instance to handle the main state machine
-    mission = MissionStateMachine(obj)
+    mission = StageOneStateMachine(obj)
     
     
     #Set up of initial state status (inital state one)
     stageOneStatus =True
     stageTwoStatus =False
     stageThreeStatus =False
-    
+    stageFourStatus =False
+    stageFiveStatus =False
+    stageSixStatus =False
+    stageSevenStatus =False
+    stageEightStatus =False
+
     #Mission Stage Times in seconds (currently not real time)
     stageOneDuration= 5
     stageTwoDuration= 5
     stageThreeDuration= 5
+    stageFourDuration= 5
+    stageFiveDuration= 5
+    stageSixDuration= 5
+    stageSevenDuration= 5
+    stageEightDuration= 5
+    
     
     while (True):
         #----------------------------------------------------------------------
@@ -42,7 +53,7 @@ def main():
         currentTime= time.time()
         #Step : Go in to the State Machine and Execute relevant features
         
-        if obj.state == 'stageOne':
+        if obj.state == 'startMotor':
 
 	   # To-Do as long as in current State
            print ("1 - Got a true expression value")
@@ -50,13 +61,13 @@ def main():
 	   # Execution of Transition Check and Exit of current State	
            if (((currentTime-start)>=stageOneDuration) and (stageOneStatus ==True)):
                #execute statemachine transition with trigger
-               mission.triggerOne()
+               mission.reachedAlitude()
                stageOneStatus =False
                stageTwoStatus = True
                #Set time new to restart the countdown
                start = time.time()
                
-        elif obj.state == 'stageTwo':
+        elif obj.state == 'hover':
 
 	   # To-Do as long as in current State
            print ("2 - Got a true expression value")
@@ -64,13 +75,13 @@ def main():
            # Execution of Transition Check and Exit of current State
            if (((currentTime-start)>=stageTwoDuration) and (stageTwoStatus ==True)):
                 #execute statemachine transition with trigger
-                mission.triggerTwo()
+                mission.hoverTimeReached()
                 stageTwoStatus = False
                 stageThreeStatus = True
                 #Set time new to restart the countdown
                 start = time.time()
                 
-        elif obj.state == 'stageThree':
+        elif obj.state == 'changeColor':
 	   # To-Do as long as in current State
            print ("3 - Got a true expression value")
            
@@ -79,68 +90,83 @@ def main():
                 print ("We are done with the Mission")
                 print (stageThreeStatus)
                 #execute statemachine transition with trigger
-                mission.triggerThree()
+                mission.colorIsChanged()
                 stageThreeStatus = False
-                stageOneStatus = True
+                stageFourStatus = True
                 #Set time new to restart the countdown
                 start = time.time()
 
-        elif obj.state == 'stageThree':
+        elif obj.state == 'goToEnemiesArea':
 	   # To-Do as long as in current State
-           print ("3 - Got a true expression value")
+           print ("4 - Got a true expression value")
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageThreeDuration) and (stageThreeStatus ==True)):
+           if (((currentTime-start)>=stageFourDuration) and (stageFourStatus ==True)):
                 print ("We are done with the Mission")
                 print (stageThreeStatus)
                 #execute statemachine transition with trigger
-                mission.triggerThree()
-                stageThreeStatus = False
-                stageOneStatus = True
+                mission.ReachedEnemiesArea()
+                stageFourStatus = False
+                stageFiveStatus = True
                 #Set time new to restart the countdown
                 start = time.time()
 
-        elif obj.state == 'stageThree':
+        elif obj.state == 'hoverLowAttitude':
 	   # To-Do as long as in current State
-           print ("3 - Got a true expression value")
+           print ("5 - Got a true expression value")
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageThreeDuration) and (stageThreeStatus ==True)):
+           if (((currentTime-start)>=stageFiveDuration) and (stageFiveStatus ==True)):
                 print ("We are done with the Mission")
                 print (stageThreeStatus)
                 #execute statemachine transition with trigger
-                mission.triggerThree()
-                stageThreeStatus = False
-                stageOneStatus = True
+                mission.HoverAltInEnemiesAreaReached()
+                stageFiveStatus = False
+                stageSixStatus = True
                 #Set time new to restart the countdown
                 start = time.time()
 
-        elif obj.state == 'stageThree':
+        elif obj.state == 'dropPayload':
 	   # To-Do as long as in current State
-           print ("3 - Got a true expression value")
+           print ("6 - Got a true expression value")
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageThreeDuration) and (stageThreeStatus ==True)):
+           if (((currentTime-start)>=stageSixDuration) and (stageSixStatus ==True)):
                 print ("We are done with the Mission")
                 print (stageThreeStatus)
                 #execute statemachine transition with trigger
-                mission.triggerThree()
-                stageThreeStatus = False
-                stageOneStatus = True
+                mission.HoverAltInEnemiesAreaReached()
+                stageSixStatus = False
+                stageSevenStatus = True
                 #Set time new to restart the countdown
                 start = time.time()
                 
-        elif obj.state == 'stageThree':
+        elif obj.state == 'goToAOI':
 	   # To-Do as long as in current State
-           print ("3 - Got a true expression value")
+           print ("7 - Got a true expression value")
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageThreeDuration) and (stageThreeStatus ==True)):
+           if (((currentTime-start)>=stageSevenDuration) and (stageSevenStatus ==True)):
                 print ("We are done with the Mission")
                 print (stageThreeStatus)
                 #execute statemachine transition with trigger
-                mission.triggerThree()
-                stageThreeStatus = False
+                mission.PayloadDroped()
+                stageSevenStatus = False
+                stageEightStatus = True
+                #Set time new to restart the countdown
+                start = time.time()
+
+        elif obj.state == 'hoverInAOI':
+	   # To-Do as long as in current State
+           print ("8 - Got a true expression value")
+           
+           # Execution of Transition Check and Exit of current State
+           if (((currentTime-start)>=stageEightDuration) and (stageEightStatus ==True)):
+                print ("We are done with the Mission")
+                print (stageThreeStatus)
+                #execute statemachine transition with trigger
+                mission.BackInAOI()
+                stageEightStatus = False
                 stageOneStatus = True
                 #Set time new to restart the countdown
                 start = time.time()
@@ -153,10 +179,13 @@ def main():
         
         # ----------------- TO - DO -------------------------------------------
                 
-        # Wait for 1 sec before goig to next execution     
+
+        #----------------------------------------------------------------------
+        # WAITING PART: Wait for 1 sec before goig to next execution 
+        #----------------------------------------------------------------------
         time.sleep(1)
                 
-main()
+StageOne()
 
 
 

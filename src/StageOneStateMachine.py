@@ -72,6 +72,6 @@ class StageOneStateMachine(StateMachine):
         print('On enter red')
 
 # Class to manage the states better 
-class MissionState(object):
+class StageOneState(object):
     def __init__(self, state):
         self.state = state
