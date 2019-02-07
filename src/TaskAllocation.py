@@ -1,5 +1,6 @@
+import math
 
-class Task Allocation():
+class TaskAllocation():
     
     def TaskAssignment(PositionsOfFriends, EnemiesInOurArea, PayloadStatusOfFriends, BatteryStatusOfFriends):
     
@@ -115,12 +116,10 @@ class Task Allocation():
         
         # ==== Update Flags and Timestamps in Database to update 
         
-        def compute_distance(self, availableFriends, unhandledEnemies):
+    def compute_distance(self, availableFriends, unhandledEnemies):
         # Initialize distance list
 
-                agentDistance.append(sqrt((self.friendlyPos[0] - self.fooPos[0])**2 +\
-                                                       (self.friendlyPos[1] - self.fooPos[1])**2 +\
-                                                       (self.friendlyPos[2] - self.fooPos[2])**2))
+        distance = math.sqrt((availableFriends[0]-unhandledEnemies[0])**2 + (availableFriends[1]-unhandledEnemies[1])**2 + (availableFriends[2]-unhandledEnemies[2])**2)
         return distance
 
 
