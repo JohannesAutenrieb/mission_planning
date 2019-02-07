@@ -66,28 +66,6 @@ class DataHandler:
         self.fooPos.extend(fooPackage[1])
         self.fooTimestamp.extend(fooPackage[2])
 
-    # Compute distance between foos and enemies
-    def compute_distance(self, availableFriends, unhandledEnemies):
-        # Initialize distance list
-        distance = []
-        agentDistance = []
-
-        # Compute new data
-        for friend in availableFriends:
-
-            # Find index for the friendly id
-            friendlyIndex = self.friendlyId.index(friend)
-            agentDistance.clear()
-
-            for foo in unhandledEnemies:
-
-                fooIndex = self.fooId.index(foo)
-                # Euclidean norm p=2
-                agentDistance.append(sqrt((self.friendlyPos[friendlyIndex][0] - self.fooPos[fooIndex][0])**2 +\
-                                                       (self.friendlyPos[friendlyIndex][1] - self.fooPos[fooIndex][1])**2 +\
-                                                       (self.friendlyPos[friendlyIndex][2] - self.fooPos[fooIndex][2])**2))
-            distance.append(agentDistance)
-        return distance
 
     def get_agents_availability(self):
         # Create empty list of agents with certain status

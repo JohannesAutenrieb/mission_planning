@@ -10,30 +10,11 @@ def StageOne():
     # take initial time
     start = time.time()
     #State object to handle the states with initial state one
-    obj = StageOneState(state='startMotor')
+    StateOne = StageOneState(state='startMotor')
     #state machine instance to handle the main state machine
-    mission = StageOneStateMachine(obj)
+    StageOne = StageOneStateMachine(StateOne)
+    StageDone=False
     
-    
-    #Set up of initial state status (inital state one)
-    stageOneStatus =True
-    stageTwoStatus =False
-    stageThreeStatus =False
-    stageFourStatus =False
-    stageFiveStatus =False
-    stageSixStatus =False
-    stageSevenStatus =False
-    stageEightStatus =False
-
-    #Mission Stage Times in seconds (currently not real time)
-    stageOneDuration= 5
-    stageTwoDuration= 5
-    stageThreeDuration= 5
-    stageFourDuration= 5
-    stageFiveDuration= 5
-    stageSixDuration= 5
-    stageSevenDuration= 5
-    stageEightDuration= 5
     
     
     while (True):
@@ -53,123 +34,120 @@ def StageOne():
         currentTime= time.time()
         #Step : Go in to the State Machine and Execute relevant features
         
-        if obj.state == 'startMotor':
+        if StateOne.state == 'startMotor':
 
 	   # To-Do as long as in current State
-           print ("1 - Got a true expression value")
+           print ("S1 - Start Motor")
+           allAgentsReachedAllAltitude=True
            
 	   # Execution of Transition Check and Exit of current State	
-           if (((currentTime-start)>=stageOneDuration) and (stageOneStatus ==True)):
+           if (allAgentsReachedAllAltitude):
+               
+               print("All agents reached all Altitude")
                #execute statemachine transition with trigger
-               mission.reachedAlitude()
-               stageOneStatus =False
-               stageTwoStatus = True
+               StageOne.reachedAlitude()
                #Set time new to restart the countdown
                start = time.time()
                
-        elif obj.state == 'hover':
+        elif StateOne.state == 'hover':
 
 	   # To-Do as long as in current State
-           print ("2 - Got a true expression value")
+           print ("S1 - Initial Hover")
+           hoverTimeReached = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageTwoDuration) and (stageTwoStatus ==True)):
-                #execute statemachine transition with trigger
-                mission.hoverTimeReached()
-                stageTwoStatus = False
-                stageThreeStatus = True
+           if (hoverTimeReached):
+
+                print ("Hover time Reached")                
+               #execute statemachine transition with trigger
+                StageOne.hoverTimeReached()
+
                 #Set time new to restart the countdown
                 start = time.time()
                 
-        elif obj.state == 'changeColor':
+        elif StateOne.state == 'changeColor':
 	   # To-Do as long as in current State
-           print ("3 - Got a true expression value")
+           print ("S1 - Change Color")
+           colorIsChanged = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageThreeDuration) and (stageThreeStatus ==True)):
-                print ("We are done with the Mission")
-                print (stageThreeStatus)
+           if (colorIsChanged):
+                print ("changed Color for all Agents")
                 #execute statemachine transition with trigger
-                mission.colorIsChanged()
-                stageThreeStatus = False
-                stageFourStatus = True
+                StageOne.colorIsChanged()
+
                 #Set time new to restart the countdown
                 start = time.time()
 
-        elif obj.state == 'goToEnemiesArea':
+        elif StateOne.state == 'goToEnemiesArea':
 	   # To-Do as long as in current State
-           print ("4 - Got a true expression value")
+           print ("S1 - Go to Enemies Area")
+           ReachedEnemiesArea = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageFourDuration) and (stageFourStatus ==True)):
-                print ("We are done with the Mission")
-                print (stageThreeStatus)
+           if (ReachedEnemiesArea):
+                print ("All agents reached Enemie Area")
                 #execute statemachine transition with trigger
-                mission.ReachedEnemiesArea()
-                stageFourStatus = False
-                stageFiveStatus = True
+                StageOne.ReachedEnemiesArea()
+
                 #Set time new to restart the countdown
                 start = time.time()
 
-        elif obj.state == 'hoverLowAttitude':
+        elif StateOne.state == 'hoverLowAttitude':
 	   # To-Do as long as in current State
-           print ("5 - Got a true expression value")
+           print ("S1 - Hover in low Altitude")
+           HoverAltInEnemiesAreaReached =True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageFiveDuration) and (stageFiveStatus ==True)):
-                print ("We are done with the Mission")
-                print (stageThreeStatus)
+           if (HoverAltInEnemiesAreaReached):
+                print ("Hover Altitude in Enemies are reached")
                 #execute statemachine transition with trigger
-                mission.HoverAltInEnemiesAreaReached()
-                stageFiveStatus = False
-                stageSixStatus = True
+                StageOne.HoverAltInEnemiesAreaReached()
+
                 #Set time new to restart the countdown
                 start = time.time()
 
-        elif obj.state == 'dropPayload':
+        elif StateOne.state == 'dropPayload':
 	   # To-Do as long as in current State
-           print ("6 - Got a true expression value")
+           print ("S1 - Drop Payload")
+           PayloadDroped = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageSixDuration) and (stageSixStatus ==True)):
-                print ("We are done with the Mission")
-                print (stageThreeStatus)
+           if (PayloadDroped):
+                print ("Drop Payload")
                 #execute statemachine transition with trigger
-                mission.HoverAltInEnemiesAreaReached()
-                stageSixStatus = False
-                stageSevenStatus = True
+                StageOne.PayloadDroped()
+
                 #Set time new to restart the countdown
                 start = time.time()
                 
-        elif obj.state == 'goToAOI':
+        elif StateOne.state == 'goToAOI':
 	   # To-Do as long as in current State
-           print ("7 - Got a true expression value")
+           print ("S1 - Go to AOI")
+           allAgentsBackInAOI = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageSevenDuration) and (stageSevenStatus ==True)):
-                print ("We are done with the Mission")
-                print (stageThreeStatus)
+           if (allAgentsBackInAOI):
+                print ("All agents back in AOI")
                 #execute statemachine transition with trigger
-                mission.PayloadDroped()
-                stageSevenStatus = False
-                stageEightStatus = True
+                StageOne.BackInAOI()
+
                 #Set time new to restart the countdown
                 start = time.time()
 
-        elif obj.state == 'hoverInAOI':
+        elif StateOne.state == 'hoverInAOI':
 	   # To-Do as long as in current State
-           print ("8 - Got a true expression value")
+           print ("S1 - Hover in AOI")
+           readyToDefend = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageEightDuration) and (stageEightStatus ==True)):
-                print ("We are done with the Mission")
-                print (stageThreeStatus)
+           if (readyToDefend):
+                print ("Ready to defend MotherSuckaaaaaa :", readyToDefend)
                 #execute statemachine transition with trigger
-                mission.BackInAOI()
-                stageEightStatus = False
-                stageOneStatus = True
+
                 #Set time new to restart the countdown
                 start = time.time()
+                return readyToDefend
 
         #----------------------------------------------------------------------
         # WRITING PART: In This Part the Messages AND Parameters Are Read
@@ -183,9 +161,8 @@ def StageOne():
         #----------------------------------------------------------------------
         # WAITING PART: Wait for 1 sec before goig to next execution 
         #----------------------------------------------------------------------
-        time.sleep(1)
+        #time.sleep(1)
                 
-StageOne()
 
 
 

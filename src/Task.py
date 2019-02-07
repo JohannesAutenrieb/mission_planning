@@ -2,12 +2,6 @@ import time
 
 class Task():
     
-    # Define attributes
-    timestamp = None
-    agentIdx = None
-    taskType = None
-    wayPointLocation = None
-    taskDeadline = None
     # Defined States in the Mission State Machine
     def __init__(self,agentIdx,taskType,wayPointLocation):
         

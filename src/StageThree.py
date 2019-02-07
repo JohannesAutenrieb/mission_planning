@@ -55,10 +55,11 @@ def StageThree():
         if obj.state == 'hoverAtCurrentPosition':
 
 	   # To-Do as long as in current State
-           print ("1 - Got a true expression value")
+           print ("S3 - Hover at current Position")
+           hoverTimeReached = True
            
 	   # Execution of Transition Check and Exit of current State	
-           if (((currentTime-start)>=stageOneDuration) and (stageOneStatus ==True)):
+           if (hoverTimeReached):
                #execute statemachine transition with trigger
                mission.hoverTimeReached()
                stageOneStatus =False
@@ -69,10 +70,11 @@ def StageThree():
         elif obj.state == 'goToWaypoint':
 
 	   # To-Do as long as in current State
-           print ("2 - Got a true expression value")
+           print ("S3 - Go to Waypoint")
+           reachedAOI = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageTwoDuration) and (stageTwoStatus ==True)):
+           if (reachedAOI):
                 #execute statemachine transition with trigger
                 mission.reachedAOI()
                 stageTwoStatus = False
@@ -82,11 +84,12 @@ def StageThree():
                 
         elif obj.state == 'landInAOI':
 	   # To-Do as long as in current State
-           print ("3 - Got a true expression value")
+           print ("S3 - Land in AOI")
+           touchedGround = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageThreeDuration) and (stageThreeStatus ==True)):
-                print ("We are done with the Mission")
+           if (touchedGround):
+                print ("We touched the ground in AOI")
                 print (stageThreeStatus)
                 #execute statemachine transition with trigger
                 mission.touchedGround()
@@ -97,11 +100,12 @@ def StageThree():
 
         elif obj.state == 'waitOnGround':
 	   # To-Do as long as in current State
-           print ("4 - Got a true expression value")
+           print ("S3 - Wait on Ground")
+           timeToTurnOff = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageFourDuration) and (stageFourStatus ==True)):
-                print ("We are done with the Mission")
+           if (timeToTurnOff):
+                print ("Time to wait is over")
                 print (stageThreeStatus)
                 #execute statemachine transition with trigger
                 mission.timeToTurnOff()
@@ -112,17 +116,16 @@ def StageThree():
 
         elif obj.state == 'TurnMotorsOff':
 	   # To-Do as long as in current State
-           print ("4 - Got a true expression value")
+           print ("S3 - Turn motor off")
+           everthingShutDown = True
            
            # Execution of Transition Check and Exit of current State
-           if (((currentTime-start)>=stageFiveDuration) and (stageFiveStatus ==True)):
-                print ("We are done with the Mission")
+           if (everthingShutDown):
+                print ("Motor is turned off")
                 print (stageThreeStatus)
-                #execute statemachine transition with trigger
-                stageFiveStatus = False
-                stageOneStatus = True
                 #Set time new to restart the countdown
                 start = time.time()
+                return everthingShutDown
 
 
         #----------------------------------------------------------------------
@@ -137,9 +140,5 @@ def StageThree():
         #----------------------------------------------------------------------
         # WAITING PART: Wait for 1 sec before goig to next execution 
         #----------------------------------------------------------------------
-        time.sleep(1)
-                
-StageThree()
-
 
 

@@ -11,22 +11,23 @@ def main():
 
     # take initial time
     startTime = time.time()
-
-    # Mission Stage Times in seconds (currently not real time)
-    TotalMissionTime = 125
+    
+    #Mission Stage Times in seconds (currently not real time)
+    TotalMissionTime = 120.01
     StageThreeTime = 120
     MaximumStageTwoTime = TotalMissionTime - StageThreeTime
-
-    # State object to handle the states with initial state one
+    
+    #State object to handle the states with initial state one
     obj = MissionState(state='stageOne')
-
-    # state machine instance to handle the main state machine
-    mission = MissionStateMachine(obj)
-
-    # Set up of initial state status (inital state one)
-    StageOneCompleted = False
-    StageThreeCompleted = False
-
+    
+    #state machine instance to handle the main state machine
+    mission = MissionStateMachine(obj)    
+    
+    #Set up of initial state status (inital state one)
+    StageOneCompleted =False
+    StageThreeCompleted =False
+    MissionDone = False
+    
     while (True):
         # ----------------------------------------------------------------------
         # READING PART: In This Part the Messages AND Parameters Are Read
@@ -46,43 +47,46 @@ def main():
 
         if obj.state == 'stageOne':
 
-            # To-Do as long as in current State
-            print("1 - Stage One Entered")
-            # Execute Stage One State Machine and return Boolean if executed
-            StageOneCompleted = StageOne()
-            # print ("Status:", StageOne())
+	   # To-Do as long as in current State
+           print ("1 - Stage One Entered")
+           #Execute Stage One State Machine and return Boolean if executed
+           StageOneCompleted = StageOne()
+           #print ("Status:", StageOne())
+           
+	   # Execution of Transition Check and Exit of current State	
+           if (StageOneCompleted):
+               #execute statemachine transition with trigger
+               print ("Switch Bitch")
+               mission.triggerOne()
 
-            # Execution of Transition Check and Exit of current State
-            if (StageOneCompleted):
-                # execute statemachine transition with trigger
-                print("Switch Bitch")
-                mission.triggerOne()
-
-
+               
         elif obj.state == 'stageTwo':
 
-            # To-Do as long as in current State
-            print("2 - Got a true expression value")
-
-            # Execution of Transition Check and Exit of current State
-            if (((currentTime - startTime) >= MaximumStageTwoTime)):
-                # execute statemachine transition with trigger
+	   # To-Do as long as in current State
+           print ("2 - Got a true expression value")
+           
+           # Execution of Transition Check and Exit of current State
+           if (((currentTime-startTime)>=MaximumStageTwoTime)):
+                #execute statemachine transition with trigger
                 mission.triggerTwo()
 
-
+                
         elif obj.state == 'stageThree':
-            # To-Do as long as in current State
-            print("3 - Got a true expression value")
-
-            StageThreeCompleted = StageThree()
-
-            # Execution of Transition Check and Exit of current State
-            if (StageThreeCompleted):
-                print("We are done with the Mission")
+	   # To-Do as long as in current State
+           print ("3 - Stage Three entered")
+           
+           StageThreeCompleted = StageThree()
+           
+           # Execution of Transition Check and Exit of current State
+           if (StageThreeCompleted):
+                print ("We are done with the Mission")
+                MissionDone = True
                 # Let's go and drink a beer
-                return
+                return MissionDone
+                
+        #----------------------------------------------------------------------
 
-                # ----------------------------------------------------------------------
+
         # WRITING PART: In This Part the Messages AND Parameters Are Read
         # ----------------------------------------------------------------------
 

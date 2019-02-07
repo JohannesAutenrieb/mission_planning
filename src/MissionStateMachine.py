@@ -3,14 +3,15 @@ from statemachine import StateMachine, State
 class MissionStateMachine(StateMachine):
 
     # Defined States in the Mission State Machine
-    stageOne = State('stageOne', initial=True)
+    init = State('init', initial=True)
+    stageOne = State('stageOne')
     stageTwo = State('stageTwo')
     stageThree = State('stageThree')
 
     # Defined Transitions
+    initEnd = init.to(stageOne)
     triggerOne = stageOne.to(stageTwo)
     triggerTwo = stageTwo.to(stageThree)
-    triggerThree = stageThree.to(stageOne)
     
     # Executed when entering stages
     def on_enter_stageOne(self):
