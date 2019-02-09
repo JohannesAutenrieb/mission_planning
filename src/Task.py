@@ -3,27 +3,41 @@ import time
 class Task():
     
     # Defined States in the Mission State Machine
-    def __init__(self,agentIdx,taskType,wayPointLocation):
+    def __init__(self,agentIdx,taskType,wayPointLocation,taskDeadline):
         
         self.timestamp = time.time()
-        self.agentIdx = None
-        self.taskType = None
-        self.wayPointLocation = None
-        self.taskDeadline = None
+        self.agentIdx = agentIdx
+        self.taskType = taskType
+        self.wayPointLocation = wayPointLocation
+        self.taskDeadline = taskDeadline
     
     def get_timestamp(self):
-        print('Test Output timestamp :', self.timestamp)
+        return self.timestamp 
 
     def get_agentIdx(self):
-        print('Test Output agentIdx :', self.agentIdx)
+        return self.agentIdx 
 
     def get_taskType(self):
-        print('Test Output taskType :', self.taskType)
+        return self.taskType 
 
     def get_wayPointLocation(self):
-        print('Test Output wayPointLocation :', self.wayPointLocation)
+        return self.wayPointLocation 
 
     def get_taskDeadline(self):
-        print('Test Output taskDeadline :', self.taskDeadline)
+        return self.taskDeadline 
     
 
+    def set_timestamp(self):
+        self.timestamp = time.time()
+
+    def set_agentIdx(self, agentIdx):
+        self.agentIdx = agentIdx
+
+    def set_taskType(self, taskType):
+        self.taskType = taskType
+
+    def set_wayPointLocation(self, wayPointLocation):
+        self.wayPointLocation = wayPointLocation
+
+    def set_taskDeadline(self, taskDeadline):
+        self.taskDeadline = taskDeadline

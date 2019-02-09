@@ -1,32 +1,65 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb  7 18:10:26 2019
-
-
-"""
 
 class Agent():
     
     # Defined States in the Mission State Machine
-    def __init__(self,agentId,agentStatus,agentPos,agentBattery):
+    def __init__(self,agentId,agentStatus,agentPos, agentOrient,taskStatus,agentBattery, agentPayload):
         
         self.agentId = agentId
         self.agentStatus = agentStatus
         self.agentPos = agentPos
+        self.agentOrient = agentOrient
+        self.taskStatus  = taskStatus
         self.agentBattery = agentBattery
+        self.agentPayload = agentPayload
+        self.lastReward = 0
 
-    def get_timestamp(self):
-        print('Test Output timestamp :', self.timestamp)
+    # Getter Functions
+    def get_agentId(self):
+        return self.agentId 
 
-    def get_agentIdx(self):
-        print('Test Output agentIdx :', self.agentIdx)
+    def get_agentStatus(self):
+        return self.agentStatus 
 
-    def get_taskType(self):
-        print('Test Output taskType :', self.taskType)
+    def get_agentPos(self):
+        return self.agentPos 
 
-    def get_wayPointLocation(self):
-        print('Test Output wayPointLocation :', self.wayPointLocation)
+    def get_agentOrient(self):
+        return self.agentOrient
 
-    def get_taskDeadline(self):
-        print('Test Output taskDeadline :', self.taskDeadline)
+    def get_taskStatus(self):
+        return self.taskStatus 
+
+    def get_agentBattery(self):
+        return self.agentBattery 
+
+    def get_agentPayload(self):
+        return self.agentPayload
+
+    def get_lastReward(self):
+        return self.curentReward 
+    
+    
+    # setter Functions
+    def set_agentId(self, agentId):
+        self.agentId = agentId
+
+    def set_agentStatus(self, agentStatus):
+        self.agentStatus = agentStatus
+
+    def set_agentPos(self, agentPos):
+        self.agentPos = agentPos
+
+    def set_agentOrient(self, agentOrient):
+        self.agentOrient = agentOrient
+
+    def set_taskStatus(self, taskStatus):
+        self.taskStatus = taskStatus
+
+    def set_agentBattery(self, agentBattery):
+        self.agentBattery = agentBattery
+        
+    def set_agentPayload(self, agentPayload):
+        self.agentPayload = agentPayload
+
+    def set_lastReward(self, lastReward):
+        self.lastReward = lastReward
