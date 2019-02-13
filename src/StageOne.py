@@ -1,4 +1,5 @@
 from StageOneStateMachine import StageOneStateMachine, StageOneState
+from Task import Task
 import time
 
 class MissionStageOne():
@@ -18,20 +19,34 @@ class MissionStageOne():
         self.StageOneState = StageOneStateMachine(self.StateOne)
         self.StageDone=False
         
+        self.Hovertime = 10 #seconds
+        self.hoverTimeReached = False
+        self.colorIsChanged = False
+        self.PayloadDroped = False
+        self.OnWayBackHome = False
+        self.readyToDefend = False
+        
+        
+        #Send Color Task
+        
+        self.EntryStartMotor = False 
+        self.EntryhoverState = False
+        self.EntryColorChange = False
+        self.EntryAttackState = False
+        self.EntryHoverInAOI = False
+        self.EntryPayloadDrop = False
+        self.EntryBackHome = False
+        self.EntryDefendStart = False
+        
 
-    def StageOne(self):
+    def StageOne(self, currentFriendsInformation, currentEnemyInformation, TaskList):
     
-
-        
-        
        
         #----------------------------------------------------------------------
         # READING PART: In This Part the Messages AND Parameters Are Read
         #----------------------------------------------------------------------        
         
-        # Here the parameters have to be read
-
-        	# ----------------- TO - DO -------------------------------------------
+        # ----------------- TO - DO -------------------------------------------
         
         #----------------------------------------------------------------------
         # EXECUTION PART: In This Part The State Machine is Running
@@ -45,7 +60,22 @@ class MissionStageOne():
 
 	   # To-Do as long as in current State
            print ("S1 - Start Motor")
-           self.allAgentsReachedAllAltitude=True
+
+           if not (self.EntryStartMotor):
+           # Execute Payload Drop
+           # Create Task Objects handle the tasks for each agent
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+                   
+               self.EntryStartMotor = True
+               return
+               
+               
+           ## ==Main Part ========
+           self.allAgentsReachedAllAltitude=self.allAgentsFinishedTask(currentFriendsInformation);
+           
            time.sleep(2)
            
 	   # Execution of Transition Check and Exit of current State	
@@ -54,29 +84,67 @@ class MissionStageOne():
                print("All agents reached all Altitude")
                #execute statemachine transition with trigger
                self.StageOneState.reachedAlitude()
+               #times runs now for next stage in hover mode
+               self.start = time.time()
+               
 
                
         elif self.StateOne.state == 'hover':
 
 	   # To-Do as long as in current State
            print ("S1 - Initial Hover")
-           self.hoverTimeReached = True
+           
+           #Entry
+           if not (self.EntryhoverState):
+           #Execute Payload Drop
+           # Create Task Objects
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+                   
+               self.EntryhoverState = True
+               
+           ## ==Main Part ========
+           self.current = time.time()          
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+          
+           if ((self.current-self.start)>=self.Hovertime): # Hovertime Comapare
+               self.hoverTimeReached = True
+           else:
+               self.hoverTimeReached = False
+               
+           
+           #Exit of current State
            if (self.hoverTimeReached):
-
                 print ("Hover time Reached")                
-               #execute statemachine transition with trigger
+               # Execution of Transition
                 self.StageOneState.hoverTimeReached()
+                
 
 
                 
         elif self.StateOne.state == 'changeColor':
 	   # To-Do as long as in current State
            print ("S1 - Change Color")
-           self.colorIsChanged = True
+           #Entry
+           if not (self.EntryColorChange):
+               #Execute color change
+               # Send Task
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+               self.EntryhoverState = True    
+               print ("S1 - Change Color")
+               
+           ## ==Main Part ========    
+           self.colorIsChanged = self.allAgentsFinishedTask(self,currentFriendsInformation)
+           
+           #Wait for two seconds
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           #Exit of current State
            if (self.colorIsChanged):
                 print ("changed Color for all Agents")
                 #execute statemachine transition with trigger
@@ -87,9 +155,22 @@ class MissionStageOne():
         elif self.StateOne.state == 'goToEnemiesArea':
 	   # To-Do as long as in current State
            print ("S1 - Go to Enemies Area")
-           self.ReachedEnemiesArea = True
+           #Entry
+           if not (self.EntryAttackState):
+           #Execute Payload Drop
+           # Create Task Objects
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+               self.EntryAttackState = True
+            
+           ## ==Main Part ========
+           self.ReachedEnemiesArea=self.allAgentsFinishedTask(currentFriendsInformation);
+           
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           #Exit of current State
            if (self.ReachedEnemiesArea):
                 print ("All agents reached Enemie Area")
                 #execute statemachine transition with trigger
@@ -100,9 +181,21 @@ class MissionStageOne():
         elif self.StateOne.state == 'hoverLowAttitude':
 	   # To-Do as long as in current State
            print ("S1 - Hover in low Altitude")
-           self.HoverAltInEnemiesAreaReached =True
+           #Entry
+           if not (self.EntryHoverInAOI):
+           #Execute Payload Drop
+           # Create Task Objects
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+               self.EntryHoverInAOI = True           
+           
+           ## ==Main Part ========
+           self.HoverAltInEnemiesAreaReached =self.allAgentsFinishedTask(currentFriendsInformation)
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           #Exit of current State
            if (self.HoverAltInEnemiesAreaReached):
                 print ("Hover Altitude in Enemies are reached")
                 #execute statemachine transition with trigger
@@ -113,21 +206,42 @@ class MissionStageOne():
         elif self.StateOne.state == 'dropPayload':
 	   # To-Do as long as in current State
            print ("S1 - Drop Payload")
-           self.PayloadDroped = True
+           #Entry
+           if not (self.EntryPayloadDrop):
+           #Execute Payload Drop
+           # Create Task Objects
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+               self.EntryPayloadDrop = True
+            ## ==Main Part ======== 
+           self.PayloadDroped = self.allAgentsFinishedTask(currentFriendsInformation)   
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           #Exit of current State
            if (self.PayloadDroped):
-                print ("Drop Payload")
+                print ("Payload Droped #DropItLikeItsHot")
                 #execute statemachine transition with trigger
                 self.StageOneState.PayloadDroped()
 
                 
         elif self.StateOne.state == 'goToAOI':
 	   # To-Do as long as in current State
-           print ("S1 - Go to AOI")
-           self.allAgentsBackInAOI = True
+           #Entry
+           if not (self.EntryBackHome):
+           #Execute Payload Drop
+           # Send Task
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+               self.EntryBackHome = True
+           ## ==Main Part ========
+           self.allAgentsBackInAOI =self.allAgentsFinishedTask(currentFriendsInformation)
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           #Exit of current State
            if (self.allAgentsBackInAOI):
                 print ("All agents back in AOI")
                 #execute statemachine transition with trigger
@@ -137,13 +251,23 @@ class MissionStageOne():
         elif self.StateOne.state == 'hoverInAOI':
 	   # To-Do as long as in current State
            print ("S1 - Hover in AOI")
-           self.readyToDefend = True
+           #Entry
+           if not (self.EntryDefendStart):
+           #Execute Payload Drop
+           # Create Task Objects
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+               self.EntryDefendStart = True
+           ## ==Main Part ========
+           self.readyToDefend = self.allAgentsFinishedTask(currentFriendsInformation)
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           #Exit of current State
            if (self.readyToDefend):
                 print ("Ready to defend MotherSuckaaaaaa :", self.readyToDefend)
                 #execute statemachine transition with trigger
-
                 return self.readyToDefend
 
             #----------------------------------------------------------------------
@@ -160,6 +284,11 @@ class MissionStageOne():
             #----------------------------------------------------------------------
             #time.sleep(1)
                 
-
+    def allAgentsFinishedTask(self,currentFriendsInformation):
+    #Loop over all friends to see if all fullfiled task
+        for i in range(0, len(currentFriendsInformation.friendlyStatus)):
+            if(currentFriendsInformation.Task[i] == True):
+                return False
+        return True
 
 

@@ -3,13 +3,13 @@ import time
 class Task():
     
     # Defined States in the Mission State Machine
-    def __init__(self,agentIdx,taskType,wayPointLocation,taskDeadline):
+    def __init__(self,agentIdx,taskType,wayPointLocation):
         
         self.timestamp = time.time()
         self.agentIdx = agentIdx
         self.taskType = taskType
         self.wayPointLocation = wayPointLocation
-        self.taskDeadline = taskDeadline
+        #self.taskDeadline = taskDeadline
     
     def get_timestamp(self):
         return self.timestamp 
@@ -26,7 +26,7 @@ class Task():
     def get_taskDeadline(self):
         return self.taskDeadline 
     
-
+    #Maybe not useful under python
     def set_timestamp(self):
         self.timestamp = time.time()
 

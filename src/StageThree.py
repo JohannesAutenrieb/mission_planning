@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from StageThreeStateMachine import StageThreeStateMachine, StageThreeState
+from Task import Task
+import time
+
 
 class MissionStageThree():
 
@@ -17,11 +20,19 @@ class MissionStageThree():
         #state machine instance to handle the main state machine
         self.mission = StageThreeStateMachine(self.obj)
         
-    
+        # Entry Trigger
+        self.EntryHover = False 
+        self.EntryGoToWaypoint = False
+        self.EntryLandInAOI = False
+        self.EntryWaitOnGround = False
+        self.EntryTurnMotorsOff = False
+        self.Entry = False
+        self.Entry = False
+        self.Entry = False
         
         
 
-    def StageThree(self):
+    def StageThree(self, currentFriendsInformation, currentEnemyInformation, TaskList):
 
         
      
@@ -41,6 +52,17 @@ class MissionStageThree():
         #Step : Go in to the State Machine and Execute relevant features
         
         if self.obj.state == 'hoverAtCurrentPosition':
+            
+           if not (self.EntryStartMotor):
+           # Execute Payload Drop
+           # Create Task Objects handle the tasks for each agent
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+                   
+               self.EntryStartMotor = True
+               return
 
 	   # To-Do as long as in current State
            print ("S3 - Hover at current Position")
@@ -56,6 +78,17 @@ class MissionStageThree():
 
 	   # To-Do as long as in current State
            print ("S3 - Go to Waypoint")
+           if not (self.EntryStartMotor):
+           # Execute Payload Drop
+           # Create Task Objects handle the tasks for each agent
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+                   
+               self.EntryStartMotor = True
+               return
+           
            reachedAOI = True
            time.sleep(2)
            # Execution of Transition Check and Exit of current State
@@ -67,6 +100,16 @@ class MissionStageThree():
         elif self.obj.state == 'landInAOI':
 	   # To-Do as long as in current State
            print ("S3 - Land in AOI")
+           if not (self.EntryStartMotor):
+           # Execute Payload Drop
+           # Create Task Objects handle the tasks for each agent
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+                   
+               self.EntryStartMotor = True
+               return
            touchedGround = True
            time.sleep(2)
            # Execution of Transition Check and Exit of current State
@@ -78,6 +121,16 @@ class MissionStageThree():
         elif self.obj.state == 'waitOnGround':
 	   # To-Do as long as in current State
            print ("S3 - Wait on Ground")
+           if not (self.EntryStartMotor):
+           # Execute Payload Drop
+           # Create Task Objects handle the tasks for each agent
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+                   
+               self.EntryStartMotor = True
+               return
            timeToTurnOff = True
            time.sleep(2)
            # Execution of Transition Check and Exit of current State
@@ -89,6 +142,16 @@ class MissionStageThree():
         elif self.obj.state == 'TurnMotorsOff':
 	   # To-Do as long as in current State
            print ("S3 - Turn motor off")
+           if not (self.EntryStartMotor):
+           # Execute Payload Drop
+           # Create Task Objects handle the tasks for each agent
+               for i in range(0, len(currentFriendsInformation.friendlyId)):
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   TaskList.append(self.Task)
+                   del self.Task
+                   
+               self.EntryStartMotor = True
+               return
            everthingShutDown = True
            time.sleep(2)
            # Execution of Transition Check and Exit of current State
