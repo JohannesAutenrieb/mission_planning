@@ -1,5 +1,5 @@
 from StageOneStateMachine import StageOneStateMachine, StageOneState
-from Task import Task
+from Task import Task, TaskType
 import time
 
 class MissionStageOne():
@@ -65,7 +65,7 @@ class MissionStageOne():
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.TAKEOFF.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                    
@@ -99,7 +99,7 @@ class MissionStageOne():
            #Execute Payload Drop
            # Create Task Objects
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.REPAINT.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                    
@@ -122,8 +122,9 @@ class MissionStageOne():
                 self.StageOneState.hoverTimeReached()
                 
 
-
-                
+        ###
+        ## Get rid of this step ----- USELESS
+        ###
         elif self.StateOne.state == 'changeColor':
 	   # To-Do as long as in current State
            print ("S1 - Change Color")
@@ -132,7 +133,7 @@ class MissionStageOne():
                #Execute color change
                # Send Task
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.REPAINT.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryhoverState = True    
@@ -160,7 +161,7 @@ class MissionStageOne():
            #Execute Payload Drop
            # Create Task Objects
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryAttackState = True
@@ -211,7 +212,7 @@ class MissionStageOne():
            #Execute Payload Drop
            # Create Task Objects
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.PRELEASE.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryPayloadDrop = True
@@ -233,7 +234,7 @@ class MissionStageOne():
            #Execute Payload Drop
            # Send Task
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryBackHome = True

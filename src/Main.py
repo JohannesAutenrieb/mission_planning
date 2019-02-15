@@ -3,7 +3,7 @@ from StageOne import MissionStageOne
 from StageThree import MissionStageThree
 from EnemyStatus import EnemyStatus
 from FriendStatus import FriendStatus
-from Task import Task
+from Task import Task, TaskType
 import datetime
 from PyQt5 import QtCore
 import sys

@@ -1,4 +1,14 @@
 import time
+from enum import Enum
+
+class TaskType(Enum):
+    TAKEOFF = 1
+    WAYPOINT = 2
+    PRELEASE = 3
+    REPAINT = 4
+    LAND = 5
+    ABORTMISSION = 6
+    TURNOFF = 7
 
 class Task():
     
@@ -7,7 +17,7 @@ class Task():
         
         self.timestamp = time.time()
         self.agentIdx = agentIdx
-        self.taskType = taskType
+        self.taskType = TaskType(taskType)
         self.wayPointLocation = wayPointLocation
         #self.taskDeadline = taskDeadline
     

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from StageThreeStateMachine import StageThreeStateMachine, StageThreeState
-from Task import Task
+from Task import Task,TaskType
 import time
 
 
@@ -82,7 +82,7 @@ class MissionStageThree():
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                    
@@ -104,7 +104,7 @@ class MissionStageThree():
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.LAND.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                    
@@ -146,7 +146,7 @@ class MissionStageThree():
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.TURNOFF.value,[None]*3)
                    TaskList.append(self.Task)
                    del self.Task
                    
