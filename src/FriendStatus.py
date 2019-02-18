@@ -8,7 +8,7 @@ class FriendStatus():
         #Define the input data containers for foos:
         self.friendlyId = []
         self.friendlyStatus = []
-        self.Task = []
+        self.TaskStatus = []
         self.friendlyPos = []
         self.friendlyBatt = []
         self.friendlyTimestamp = []

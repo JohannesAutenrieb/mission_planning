@@ -140,10 +140,8 @@ class MissionStageOne():
                print ("S1 - Change Color")
                
            ## ==Main Part ========    
-           self.colorIsChanged = self.allAgentsFinishedTask(self,currentFriendsInformation)
+           self.colorIsChanged = self.allAgentsFinishedTask(currentFriendsInformation)
            
-           #Wait for two seconds
-           time.sleep(2)
            
            #Exit of current State
            if (self.colorIsChanged):
@@ -169,7 +167,6 @@ class MissionStageOne():
            ## ==Main Part ========
            self.ReachedEnemiesArea=self.allAgentsFinishedTask(currentFriendsInformation);
            
-           time.sleep(2)
            
            #Exit of current State
            if (self.ReachedEnemiesArea):
@@ -186,8 +183,9 @@ class MissionStageOne():
            if not (self.EntryHoverInAOI):
            #Execute Payload Drop
            # Create Task Objects
+               hoverTime = 5
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAIT.value,[None]*3,hoverTime)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryHoverInAOI = True           
@@ -256,8 +254,10 @@ class MissionStageOne():
            if not (self.EntryDefendStart):
            #Execute Payload Drop
            # Create Task Objects
+               hoverTime = 5
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAIT.value,[None]*3,hoverTime)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryDefendStart = True

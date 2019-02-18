@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.6
+
 from MissionStateMachine import MissionStateMachine, MissionState
 from StageOne import MissionStageOne
 from StageThree import MissionStageThree
@@ -5,10 +7,11 @@ from EnemyStatus import EnemyStatus
 from FriendStatus import FriendStatus
 from Task import Task, TaskType
 import datetime
-from PyQt5 import QtCore
-import sys
+#from PyQt5 import QtCore
+#import sys
 import rospy
 from std_msgs.msg import String
+from mission_planning.msg import TaskList
 
 class MissionExecution():
     
@@ -49,15 +52,12 @@ class MissionExecution():
         # Define the input data containers for foos:
         self.fooId = []
         self.fooPos = []
-        self.fooTimestamp = []   
-        
-        
-        # Init of ROS Listener Node
-        rospy.init_node('TaskAllocation', anonymous=True)
-        rospy.Subscriber("DataBase", String, self.callback)
+        self.fooTimestamp = [] 
         
         # Init of ROS Talker
-        self.pub = rospy.Publisher('SytstemArch', String, queue_size=10)
+        self.pub = rospy.Publisher('SytstemArch', TaskList, queue_size=10)
+        
+    
 
 
 
@@ -65,7 +65,6 @@ class MissionExecution():
 
     def callback(self,data):
         #operation on recieved data
-        # data.Value 
 #        print(data.data)
         
         #REceived Friend Information
@@ -75,21 +74,13 @@ class MissionExecution():
         setattr(self.currentFriendsInformation, 'friendlyBatt', data.friendlyBatt)
         setattr(self.currentFriendsInformation, 'friendlyTimestamp', data.friendlyTimestamp)
 
-#        self.friendlyId = data.friendlyId
-#        self.friendlyStatus = data.friendlyStatus
-#        self.friendlyPos = data.friendlyPos
-#        self.friendlyBatt = data.friendlyBatt
-#        self.friendlyTimestamp = data.friendlyTimestamp
-        
-        #Received Foo information
-        
+
+        #Received Foo information  
         setattr(self.currentEnemyInformation, 'fooId', data.fooId) 
         setattr(self.currentEnemyInformation, 'fooPos', data.fooPos)
         setattr(self.currentEnemyInformation, 'fooTimestamp', data.fooTimestamp)
         
-#        self.fooId = data.fooId
-#        self.fooPos = data.fooPos
-#        self.fooTimestamp = data.fooTimestamp
+
 
 
     def missionState(self):
@@ -155,9 +146,17 @@ class MissionExecution():
             # Here the variables have to be send to external processes and agents
             #
             #--- Handle Task before
-           
-            self.pub.publish("Tasks")
-    
+            #self.TaskList    
+            #self.pub.publish(self.TaskList)
+            
+            msg = TaskList()
+            msg.enemy_ID =  1
+            msg.confidence = 1
+            msg.position = 1
+            msg.timestamp = datetime.datetime.now().timestamp()
+            
+            self.pub.publish(msg)
+
             # Wait for 1 sec before goig to next execution    
 
 if __name__ == "__main__":
@@ -165,15 +164,18 @@ if __name__ == "__main__":
     
     # Setup of Mission Statemachine
     missionExecutaion = MissionExecution()
+    
+    # Init of ROS Listener Node
+    rospy.init_node('TaskAllocation', anonymous=True)
+    
     # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
-    # Setup of timer thread
-    app = QtCore.QCoreApplication([])   
-    timer = QtCore.QTimer()
-    time = QtCore.QTime()
-    timer.timeout.connect(missionExecutaion.missionState)
-    timer.start(100)
-    sys.exit(app.exec_())
+    rate = rospy.Rate(1)
+    
+    while not rospy.is_shutdown():
+        missionExecutaion.missionState()
+        rate.sleep()
+        
+    
 
 
 

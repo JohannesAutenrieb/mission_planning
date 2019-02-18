@@ -21,6 +21,7 @@ class MissionStageThree():
         self.mission = StageThreeStateMachine(self.obj)
         
         # Entry Trigger
+        self.EntryStartMotor = False
         self.EntryHover = False 
         self.EntryGoToWaypoint = False
         self.EntryLandInAOI = False
@@ -124,8 +125,9 @@ class MissionStageThree():
            if not (self.EntryStartMotor):
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
+               waitingTime = 5
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAIT.value,[None]*3,waitingTime)
                    TaskList.append(self.Task)
                    del self.Task
                    

@@ -7,19 +7,20 @@ class TaskType(Enum):
     PRELEASE = 3
     REPAINT = 4
     LAND = 5
-    ABORTMISSION = 6
-    TURNOFF = 7
+    WAIT = 6
+    ABORTMISSION = 7
+    TURNOFF = 8
 
 class Task():
     
     # Defined States in the Mission State Machine
-    def __init__(self,agentIdx,taskType,wayPointLocation):
+    def __init__(self,agentIdx,taskType,wayPointLocation,taskDeadline = None):
         
         self.timestamp = time.time()
         self.agentIdx = agentIdx
         self.taskType = TaskType(taskType)
         self.wayPointLocation = wayPointLocation
-        #self.taskDeadline = taskDeadline
+        self.taskDeadline = taskDeadline
     
     def get_timestamp(self):
         return self.timestamp 
