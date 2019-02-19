@@ -47,7 +47,7 @@ class MissionExecution():
         # Define the input data containers for friends:
         self.currentFriendsInformation = FriendStatus()
         self.currentEnemyInformation= EnemyStatus()
-        self.TaskList = []
+        self.taskList = []
 
         # Define the input data containers for foos:
         self.fooId = []
@@ -96,6 +96,7 @@ class MissionExecution():
             # ----------------------------------------------------------------------
             # EXECUTION PART: In This Part The State Machine is Running
             # ----------------------------------------------------------------------
+            print("length of TaskList", len(self.taskList))
     
             # Set current time for this loop run
             self.currentTime = datetime.datetime.now().timestamp()
@@ -106,7 +107,7 @@ class MissionExecution():
     	   # To-Do as long as in current State
                print ("1 - Stage One Entered")
                #Execute Stage One State Machine and return Boolean if executed
-               self.StageOneCompleted = self.stageOneState.StageOne(self.currentFriendsInformation, self.currentEnemyInformation, self.TaskList)
+               self.StageOneCompleted = self.stageOneState.StageOne(self.currentFriendsInformation, self.currentEnemyInformation, self.taskList)
                #print ("Status:", StageOne())
     	   # Execution of Transition Check and Exit of current State	
                if (self.StageOneCompleted):
@@ -128,7 +129,7 @@ class MissionExecution():
     	   # To-Do as long as in current State
                print ("3 - Stage Three entered")
                
-               self.StageOneCompleted = self.stageThreeState.StageThree(self.currentFriendsInformation, self.currentEnemyInformation, self.TaskList)
+               self.StageOneCompleted = self.stageThreeState.StageThree(self.currentFriendsInformation, self.currentEnemyInformation, self.taskList)
                
                # Execution of Transition Check and Exit of current State
                if (self.StageThreeCompleted):
@@ -149,14 +150,24 @@ class MissionExecution():
             #self.TaskList    
             #self.pub.publish(self.TaskList)
             
-            msg = TaskList()
-            msg.agentIdx =  self.TaskList[1].agentIdx
-            msg.TaskType = self.TaskList[1].taskType
-            msg.position = self.TaskList[1].wayPointLocation
-            msg.timestamp = datetime.datetime.now().timestamp()
-            
-            self.pub.publish(msg)
-
+            if not len( self.taskList)==0:
+                for  i in range(0, len( self.taskList)):
+                    msg = TaskList()
+                    print ("Task Message:")
+                    print(self.taskList[i].agentIdx)
+                    print(self.taskList[i].taskType.value)
+                    print("Posi type:", type(self.taskList[i].wayPointLocation[0]))
+                    print(self.taskList[0].wayPointLocation)
+                    msg.agentIdx =  self.taskList[i].agentIdx
+                    msg.TaskType = self.taskList[i].taskType.value
+                    msg.position = self.taskList[i].wayPointLocation
+                    msg.timestamp = datetime.datetime.now().timestamp()
+                   
+                    self.pub.publish(msg)
+                    #clear message object
+                    del msg
+                #clear taesk lsit for next time step
+                self.taskList.clear()
             # Wait for 1 sec before goig to next execution    
 
 if __name__ == "__main__":

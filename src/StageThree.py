@@ -58,9 +58,9 @@ class MissionStageThree():
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],5,[None]*3)
-                   TaskList.append(self.Task)
-                   del self.Task
+                   TaskList.append( Task(currentFriendsInformation.friendlyId[i],TaskType.REPAINT.value,[1, 1, 1],0))
+                   #TaskList.append(self.Task)
+                   #del self.Task
                    
                self.EntryStartMotor = True
                return
@@ -82,12 +82,18 @@ class MissionStageThree():
            if not (self.EntryStartMotor):
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
+               f = open("/home/johannes/git/gdp_planning/src/mission_planning/scripts/MissionPlan/Stage_3_Attack.txt")
+               line = f.readlines(0)           
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,[None]*3)
-                   TaskList.append(self.Task)
-                   del self.Task
+                   waypoint = line[i].split(";")
+                   del waypoint[-1] # delete last element with new line command 
+                   waypoint = [int(x) for x in waypoint]              
+                   TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,waypoint,0))
+                   T#askList.append(self.Task)
+                   #del self.Task
                    
                self.EntryStartMotor = True
+               f.close() 
                return
            
            reachedAOI = True
@@ -105,9 +111,9 @@ class MissionStageThree():
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.LAND.value,[None]*3)
-                   TaskList.append(self.Task)
-                   del self.Task
+                   TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.LAND.value,[None]*3))
+                   #TaskList.append(self.Task)
+                   #del self.Task
                    
                self.EntryStartMotor = True
                return
@@ -127,9 +133,9 @@ class MissionStageThree():
            # Create Task Objects handle the tasks for each agent
                waitingTime = 5
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAIT.value,[None]*3,waitingTime)
-                   TaskList.append(self.Task)
-                   del self.Task
+                   TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.WAIT.value,[None]*3,waitingTime))
+                   #TaskList.append(self.Task)
+                   #del self.Task
                    
                self.EntryStartMotor = True
                return
@@ -148,9 +154,9 @@ class MissionStageThree():
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.TURNOFF.value,[None]*3)
-                   TaskList.append(self.Task)
-                   del self.Task
+                   TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.TURNOFF.value,[None]*3))
+                   #TaskList.append(self.Task)
+                   #del self.Task
                    
                self.EntryStartMotor = True
                return
