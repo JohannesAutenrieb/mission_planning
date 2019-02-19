@@ -6,9 +6,9 @@ class FriendStatus():
     
     def __init__(self):
         #Define the input data containers for foos:
-        self.friendlyId = []
-        self.friendlyStatus = []
-        self.TaskStatus = []
+        self.friendlyId = [1,2,3,4,5,6,7,8]
+        self.friendlyStatus = [True,True,True,True,True,True,True,True]
+        self.TaskStatus = [False, False, False, False, False, False, False, False]
         self.friendlyPos = []
         self.friendlyBatt = []
         self.friendlyTimestamp = []

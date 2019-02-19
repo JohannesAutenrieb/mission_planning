@@ -18,7 +18,7 @@ class Task():
         
         self.timestamp = time.time()
         self.agentIdx = agentIdx
-        self.taskType = TaskType(taskType)
+        self.taskType = taskType
         self.wayPointLocation = wayPointLocation
         self.taskDeadline = taskDeadline
     

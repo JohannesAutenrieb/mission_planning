@@ -150,9 +150,9 @@ class MissionExecution():
             #self.pub.publish(self.TaskList)
             
             msg = TaskList()
-            msg.enemy_ID =  1
-            msg.confidence = 1
-            msg.position = 1
+            msg.agentIdx =  self.TaskList[1].agentIdx
+            msg.TaskType = self.TaskList[1].taskType
+            msg.position = self.TaskList[1].wayPointLocation
             msg.timestamp = datetime.datetime.now().timestamp()
             
             self.pub.publish(msg)

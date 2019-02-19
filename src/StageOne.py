@@ -51,6 +51,8 @@ class MissionStageOne():
         #----------------------------------------------------------------------
         # EXECUTION PART: In This Part The State Machine is Running
         #----------------------------------------------------------------------
+        # Clean Task List from previous tasks
+        TaskList.clear()
         
         #Set current time for this loop run
         self.currentTime= time.time()
@@ -65,7 +67,7 @@ class MissionStageOne():
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.TAKEOFF.value,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.TAKEOFF.value,[0, 0, 0],0)
                    TaskList.append(self.Task)
                    del self.Task
                    
@@ -99,7 +101,7 @@ class MissionStageOne():
            #Execute Payload Drop
            # Create Task Objects
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.REPAINT.value,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.REPAINT.value,[0, 0, 0],0)
                    TaskList.append(self.Task)
                    del self.Task
                    
@@ -133,7 +135,7 @@ class MissionStageOne():
                #Execute color change
                # Send Task
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.REPAINT.value,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.REPAINT.value,[0, 0, 0],0)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryhoverState = True    
@@ -158,19 +160,23 @@ class MissionStageOne():
            if not (self.EntryAttackState):
            #Execute Payload Drop
            # Create Task Objects
+               f = open("MissionPlan/Stage_1_Attack.txt");
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,[None]*3)
+                   line = f.readlines()[i]
+                   waypoint = line.split(";")
+                   del waypoint[-1] # delete last element with new line command 
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,waypoint,0)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryAttackState = True
-            
+               f.close()  
            ## ==Main Part ========
            self.ReachedEnemiesArea=self.allAgentsFinishedTask(currentFriendsInformation);
            
            
            #Exit of current State
            if (self.ReachedEnemiesArea):
-                print ("All agents reached Enemie Area")
+                print ("All agents reached Enemy Area")
                 #execute statemachine transition with trigger
                 self.StageOneState.ReachedEnemiesArea()
 
@@ -185,7 +191,7 @@ class MissionStageOne():
            # Create Task Objects
                hoverTime = 5
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAIT.value,[None]*3,hoverTime)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAIT.value,[0, 0, 0],hoverTime)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryHoverInAOI = True           
@@ -210,7 +216,7 @@ class MissionStageOne():
            #Execute Payload Drop
            # Create Task Objects
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.PRELEASE.value,[None]*3)
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.PRELEASE.value,[0, 0, 0],0)
                    TaskList.append(self.Task)
                    del self.Task
                self.EntryPayloadDrop = True
@@ -231,10 +237,15 @@ class MissionStageOne():
            if not (self.EntryBackHome):
            #Execute Payload Drop
            # Send Task
+               f = open("MissionPlan/Stage_1_Return.txt");
                for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,[None]*3)
+                   line = f.readlines()[i]
+                   waypoint = line.split(";")
+                   del waypoint[-1] # delete last element with new line command  
+                   self.Task = Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,waypoint,0)
                    TaskList.append(self.Task)
                    del self.Task
+               f.close()
                self.EntryBackHome = True
            ## ==Main Part ========
            self.allAgentsBackInAOI =self.allAgentsFinishedTask(currentFriendsInformation)
@@ -288,7 +299,7 @@ class MissionStageOne():
     def allAgentsFinishedTask(self,currentFriendsInformation):
     #Loop over all friends to see if all fullfiled task
         for i in range(0, len(currentFriendsInformation.friendlyStatus)):
-            if(currentFriendsInformation.Task[i] == True):
+            if(currentFriendsInformation.TaskStatus[i] == True):
                 return False
         return True
 
