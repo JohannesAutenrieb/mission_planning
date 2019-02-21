@@ -13,6 +13,7 @@ class TaskType(Enum):
     Arm = 9
     DISARM = 10
     ATTACK = 11
+    SYSTEMCHECK = 12
 
 class Task():
     
