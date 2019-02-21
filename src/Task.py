@@ -10,6 +10,9 @@ class TaskType(Enum):
     WAIT = 6
     ABORTMISSION = 7
     TURNOFF = 8
+    Arm = 9
+    DISARM = 10
+    ATTACK = 11
 
 class Task():
     

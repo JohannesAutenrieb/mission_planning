@@ -8,10 +8,9 @@ class TaskManager():
         
         # ROS PArt in which all information of the swarm should been recieved and stored
         
-        #listen Initial ROS message
-        
-        listOfAgents = []
-        listOfTasks = []
+        #listen Initial ROS message   
+        self.listOfAgents = []
+        self.listOfTasks = []
         
 #        for count in range(0, numberOfAgents):
 #            x = Agent()
@@ -39,9 +38,6 @@ class TaskManager():
 #               else:
 #                  listOfTasks[].setLastReward(currentReward) 
 #               
-        
-    def sendEmergencyMessage(self):
-        print('On enter yellow')
 
     def computeExecutionReward(self, agentPos, TaskWaypoint):
         print('On enter yellow')
@@ -49,6 +45,6 @@ class TaskManager():
         return reward
 
     def sendAbortMessage(self):
-        print('On enter yellow')
+        Task(currentFriendsInformation.friendlyId[i],TaskType.TAKEOFF.value,[1, 1, 1],0)
         # send message through ROS
         

@@ -9,8 +9,9 @@ class FriendStatus():
         self.friendlyId = [1,2,3,4,5,6,7,8]
         self.friendlyStatus = [True,True,True,True,True,True,True,True]
         self.TaskStatus = [False, False, False, False, False, False, False, False]
-        self.friendlyPos = []
-        self.friendlyBatt = []
+        self.friendlyPos = [[5,6,7],[8,9,10],[11,12,13],[14,15,16]]
+        self.friendlyBatt = [1,2,3,4,5,6,7,8]
+        self.friendlyPayload = [True,True,True,True,True,True,True,True]
         self.friendlyTimestamp = []
         
     def get_fooId(self):

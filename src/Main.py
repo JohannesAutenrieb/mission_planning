@@ -6,6 +6,7 @@ from StageThree import MissionStageThree
 from EnemyStatus import EnemyStatus
 from FriendStatus import FriendStatus
 from Task import Task, TaskType
+from TaskAllocation import TaskAllocation
 import datetime
 #from PyQt5 import QtCore
 #import sys
@@ -36,6 +37,7 @@ class MissionExecution():
         self.mission = MissionStateMachine(self.obj)   
         self.stageOneState= MissionStageOne()
         self.stageThreeState= MissionStageThree()
+        self.taskAllocation = TaskAllocation()
         
         #Set up of initial state status (inital state one)
         self.StageOneCompleted =False
@@ -119,6 +121,7 @@ class MissionExecution():
     
     	   # To-Do as long as in current State
                print ("2 - Got a true expression value")
+               self.taskAllocation.TaskAllocation(self.currentFriendsInformation, self.currentEnemyInformation, self.taskList)
                
                # Execution of Transition Check and Exit of current State
                if (((self.currentTime-self.startTime)>=self.MaximumStageTwoTime)):
