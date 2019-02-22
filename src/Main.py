@@ -11,7 +11,6 @@ import datetime
 #from PyQt5 import QtCore
 #import sys
 import rospy
-from std_msgs.msg import String
 from mission_planning.msg import TaskList
 
 class MissionExecution():
@@ -69,7 +68,7 @@ class MissionExecution():
         #operation on recieved data
 #        print(data.data)
         
-        #REceived Friend Information
+        #Received Friend Information
         setattr(self.currentFriendsInformation, 'friendlyId', data.friendlyId) 
         setattr(self.currentFriendsInformation, 'friendlyStatus', data.friendlyStatus)
         setattr(self.currentFriendsInformation, 'friendlyPos', data.friendlyPos)
