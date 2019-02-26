@@ -7,7 +7,7 @@ class TaskStatusInfo():
         
         self.taskType = []
         self.agentId =[]
-        self.systemStatus = []
+        self.systemWorkingStatus = []
         self.initialPosition =[]
         self.currentPostion =[]
         self.wayPoint =[]

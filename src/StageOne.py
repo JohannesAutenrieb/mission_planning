@@ -3,8 +3,7 @@ from Task import Task, TaskType
 import time
 
 class MissionStageOne():
-    
-    
+     
     def __init__(self):
 
         #----------------------------------------------------------------------

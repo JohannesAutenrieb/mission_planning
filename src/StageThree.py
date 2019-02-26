@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 from StageThreeStateMachine import StageThreeStateMachine, StageThreeState
 from Task import Task,TaskType
 import time
@@ -89,7 +88,7 @@ class MissionStageThree():
                    del waypoint[-1] # delete last element with new line command 
                    waypoint = [int(x) for x in waypoint]              
                    TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,waypoint,0))
-                   T#askList.append(self.Task)
+                   #askList.append(self.Task)
                    #del self.Task
                    
                self.EntryStartMotor = True

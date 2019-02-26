@@ -1,29 +1,28 @@
+#!/usr/bin/env python3.6
 import rospy
 import math
 from TaskStatusInfo import TaskStatusInfo
 from Task import Task, TaskType
 import datetime
-from mission_planning.msg import TaskList, UpdateList
+from mission_planning.msg import TaskList, TaskStatusInformation
 
 class TaskManager():
     
     def __init__(self):
-        #To-Do   
+ 
         # ROS PArt in which all information of the swarm should been recieved and stored
         
         #instance to store all relevant data regarding the current tasks 
         self.taskStatusInfo = TaskStatusInfo()
         
         # Task
-        self.TaskList = []
-        self.UpdateList = []
+        self.taskList = []
 
         # Init of ROS Talker
-        self.pub = rospy.Publisher('TaskSupervision', TaskList, queue_size=10)
+       # self.pub = rospy.Publisher('TaskSupervision', TaskList, queue_size=10)
 
     def callback(self,data):
         # operation on recieved data
-        # print(data.data)
         
         #Received Friend Information
         setattr(self.taskStatusInfo, 'taskType', data.taskType) 
@@ -39,23 +38,27 @@ class TaskManager():
         
         # current time taking
         currentTime = datetime.datetime.now().timestamp()
-
-        
+      
         # Loop over all agents and check progess
         for AgentListidX in range(0, len(self.taskStatusInfo.agentId)):
-            # taking relevant time information
+           #Taking relevant time information
            timeOfAssignment = self.taskStatusInfo.timestampOfTask[AgentListidX]
            maxEstimatedTime = self.taskStatusInfo.maxEstimatedTime[AgentListidX]
 
            currentReward = self.computeExecutionReward(self.taskStatusInfo.currentPostion[AgentListidX], self.taskStatusInfo.wayPointLocation[AgentListidX],self.taskStatusInfo.initialPostion[AgentListidX])
            
            if self.taskStatusInfo.lastReward[AgentListidX]>=currentReward or (currentTime-timeOfAssignment)>maxEstimatedTime:
-               #assign task new and trigger systemCheckprocedure or land\restart
+               #Assign System Check task to trigger system Checkprocedure or land\restart
+               # SystemStatus True means it is officaly ok while False means it is not okay
                if self.taskStatusInfo.systemStatus[AgentListidX] == True :
-                  self.sendSystemRequestMessage(AgentListidX)
+                  self.sendSystemRequestMessage(AgentListidX, self.taskList)
+                  
            else:
                #set current task as last ## need to be adjusted for the index
-               setattr(self.taskStatusInfo, 'lastReward [%d]' % AgentListidX, currentReward)  
+              setattr(self.taskStatusInfo, 'lastReward [%d]' % AgentListidX, currentReward)
+            
+           if not self.taskStatusInfo.systemWorkingStatus[AgentListidX]:
+               self.sendAbortMessage(AgentListidX, self.taskList)
         
         # Message to the Agents due to problems
         if not len(self.taskList)==0:
@@ -67,8 +70,8 @@ class TaskManager():
                 print("Posi type:", type(self.taskList[i].wayPointLocation[0]))
                 print(self.taskList[0].wayPointLocation)
                 msg.agentIdx =  self.taskList[i].agentIdx
-                msg.TaskType = self.taskList[i].taskType.value
-                msg.position = self.taskList[i].wayPointLocation
+                msg.TaskType =  self.taskList[i].taskType.value
+                msg.position =  self.taskList[i].wayPointLocation
                 msg.timestamp = datetime.datetime.now().timestamp()
                
                 self.pub.publish(msg)
@@ -78,22 +81,25 @@ class TaskManager():
             self.taskList.clear()
             
         #Message to System Architecture to update global Task Status
-        if not len(self.UpdateList)==0:
-            for  i in range(0, len( self.UpdateList)):
-                msg = UpdateList()
-                print ("Update Message:")
-                print(self.UpdateList[i].agentIdx)
-                print(self.UpdateList[i].taskType.value)
-                print("Posi type:", type(self.UpdateList[i].wayPointLocation[0]))
-                print(self.UpdateList[0].wayPointLocation)
-                msg.agentIdx =  self.UpdateList[i].agentIdx
-                msg.TaskType = self.UpdateList[i].taskType.value
-                msg.position = self.UpdateList[i].wayPointLocation
-                msg.timestamp = datetime.datetime.now().timestamp()
-               
-                self.pub.publish(msg)          
-                #clear message object
-                del msg
+        for  i in range(0, len( self.taskStatusInfo.agentId)):
+            msg = TaskStatusInformation()
+            print ("Update Message:")
+            print(self.UpdateList[i].agentIdx)
+            print(self.UpdateList[i].taskType.value)
+            print("Posi type:", type(self.UpdateList[i].wayPointLocation[0]))
+            print(self.UpdateList[0].wayPointLocation)
+            msg.agentIdx =  self.taskStatusInfo.agentIdx
+            msg.TaskType =  self.taskStatusInfo.taskType.value
+            msg.initialPostion =  self.taskStatusInfo.initialPostion
+            msg.currentPostion =  self.taskStatusInfo.currentPostion
+            msg.wayPoint =  self.taskStatusInfo.wayPoint
+            msg.lastReward =  self.taskStatusInfo.lastReward
+            msg.targetId =      self.taskStatusInfo.targetId
+            msg.timestamp = datetime.datetime.now().timestamp()
+           
+            self.pub.publish(msg)          
+            #clear message object
+            del msg
             #clear taesk lsit for next time step
             self.taskList.clear()
                      
@@ -105,14 +111,14 @@ class TaskManager():
         reward = (d-a)/d
         return reward
 
-    def sendAbortMessage(self,AgentListidX):
+    def sendAbortMessage(self,AgentListidX, tasklist):
         # send message through ROS
-        Task(self.taskStatusInfo.agentId[AgentListidX],TaskType.ABORTMISSION.value,[1, 1, 1],0)
+        tasklist.append(Task(AgentListidX,TaskType.ABORTMISSION.value,[1, 1, 1],0))
         
 
-    def sendSystemRequestMessage(self, AgentListidX):
+    def sendSystemRequestMessage(self, AgentListidX, tasklist):
         # send message through ROS
-        Task(self.taskStatusInfo.agentId[AgentListidX],TaskType.SYSTEMCHECK.value,[1, 1, 1],0)
+        tasklist.append(Task(AgentListidX,TaskType.SYSTEMCHECK.value,[1, 1, 1],0))
         
         
 
@@ -125,6 +131,9 @@ if __name__ == "__main__":
     
     # Init of ROS Listener Node
     rospy.init_node('TaskManagement', anonymous=True)
+
+    # Init Listener for friend and foos
+    rospy.Subscriber("SwarmInformation", TaskStatusInformation, taskSupervision.callback)
     
     # spin() simply keeps python from exiting until this node is stopped
     rate = rospy.Rate(1)

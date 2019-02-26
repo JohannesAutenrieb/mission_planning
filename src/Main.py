@@ -11,7 +11,7 @@ import datetime
 #from PyQt5 import QtCore
 #import sys
 import rospy
-from mission_planning.msg import TaskList
+from mission_planning.msg import TaskList, SwarmInformation,TargetInformation
 
 class MissionExecution():
     
@@ -57,16 +57,10 @@ class MissionExecution():
         
         # Init of ROS Talker
         self.pub = rospy.Publisher('SytstemArch', TaskList, queue_size=10)
-        
-    
 
-
-
-#        self. rospy.Subscriber("chatter", String, callback)
-
-    def callback(self,data):
+    def callbackFriend(self,data):
         #operation on recieved data
-#        print(data.data)
+        #print(data.data)
         
         #Received Friend Information
         setattr(self.currentFriendsInformation, 'friendlyId', data.friendlyId) 
@@ -76,6 +70,9 @@ class MissionExecution():
         setattr(self.currentFriendsInformation, 'friendlyTimestamp', data.friendlyTimestamp)
 
 
+    def callbackFoos(self,data):
+        #operation on recieved data
+        #print(data.data)
         #Received Foo information  
         setattr(self.currentEnemyInformation, 'fooId', data.fooId) 
         setattr(self.currentEnemyInformation, 'fooPos', data.fooPos)
@@ -180,6 +177,10 @@ if __name__ == "__main__":
     
     # Init of ROS Listener Node
     rospy.init_node('TaskAllocation', anonymous=True)
+    
+    # Init Listener for friend and foos
+    rospy.Subscriber("SwarmInformation", SwarmInformation, missionExecutaion.callbackFriend)
+    rospy.Subscriber("TargetInformation", TargetInformation, missionExecutaion.callbackFoos)
     
     # spin() simply keeps python from exiting until this node is stopped
     rate = rospy.Rate(1)
