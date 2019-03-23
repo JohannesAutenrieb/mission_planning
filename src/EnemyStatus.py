@@ -4,7 +4,7 @@ class EnemyStatus():
          # Define the input data containers for foos:
         self.fooId = [1,2,3,4]
         self.fooPos = [[14,15,19],[2,3,6],[25,22,23],[28,17,18]]
-        self.targetConfidence = [0.56, 0.5, 0.7, 0.8]
+        self.targetConfidence = [(0.56), (0.5), (0.7), (0.8)]
         self.attackStatus = [True, False, True, False]
         self.fooTimestamp = []
         

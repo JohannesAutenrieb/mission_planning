@@ -7,49 +7,41 @@ class StageThreeStateMachine(StateMachine):
     goToWaypoint = State('goToWaypoint')
     landInAOI = State('landInAOI')
     waitOnGround = State('waitOnGround')
-    TurnMotorsOff = State('TurnMotorsOff')
 
 
     # Defined Transitions
     hoverTimeReached = hoverAtCurrentPosition.to(goToWaypoint)
     reachedAOI = goToWaypoint.to(landInAOI)
     touchedGround = landInAOI.to(waitOnGround)
-    timeToTurnOff = waitOnGround.to(TurnMotorsOff)
 
     
     # Executed when entering stages
     def on_enter_hoverAtCurrentPosition(self):
-        print('On enter yellow')
+        print("S3:: Hover at current position ::")
     
     def on_enter_goToWaypoint(self):
-        print('On enter yellow')
+        print("S3:: Go hostile AoI ::")
 
     def on_enter_landInAOI(self):
-        print('On enter red')
+        print("S3:: Land in AoI ::")
 
     def on_enter_waitOnGround(self):
-        print('On enter red')
+        print("S3:: Wait on the ground ::")
 
-    def on_enter_TurnMotorsOff(self):
-        print('On enter red')
-        
 
     # Executed when exiting stages        
     def on_exit_hoverAtCurrentPosition(self):
-        print('In green')
+        print("S3: Hover timeout")
 
     def on_exit_goToWaypoint(self):
-        print('On enter yellow')
+        print("S3: All agents at landing position")
         
     def on_exit_landInAOI(self):
-        print('On enter red')
+        print("S3: All agents on the ground")
         
     def on_exit_waitOnGround(self):
-        print('On enter red')
-        
-    def on_exit_TurnMotorsOff(self):
-        print('On enter red')
-        
+        print("S3: Disarmed")
+
 
 # Class to manage the states better 
 class StageThreeState(object):

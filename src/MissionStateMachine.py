@@ -15,23 +15,23 @@ class MissionStateMachine(StateMachine):
     
     # Executed when entering stages
     def on_enter_stageOne(self):
-        print('On enter yellow')
+        print(":::: STAGE ONE ENTERED :::: ")
     
     def on_enter_stageTwo(self):
-        print('On enter yellow')
+        print(":::: STAGE TWO ENTERED :::: ")
 
     def on_enter_stageThree(self):
-        print('On enter red')
+        print(":::: STAGE THREE ENTERED :::: ")
 
     # Executed when exiting stages        
     def on_exit_stageOne(self):
-        print('In green')
+        print("S1:Transition to Stage 2")
 
     def on_exit_stageTwo(self):
-        print('On enter yellow')
+        print("S2:Transition to Stage 3")
         
     def on_exit_stageThree(self):
-        print('On enter red')
+        print(":::: SYSTEM SHUTDOWN :::: ")
 
 # Class to manage the states better 
 class MissionState(object):

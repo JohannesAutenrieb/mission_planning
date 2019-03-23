@@ -7,13 +7,15 @@ class FriendStatus():
     def __init__(self):
         #Define the input data containers for foos:
         self.friendlyId = [1,2,3,4,5,6,7,8]
-        self.friendlyStatus = [True,True,True,True,True,True,True,True]
-        self.TaskStatus = [False, False, False, False, False, False, False, False]
-        self.friendlyPos = [[5,6,7],[8,9,10],[11,12,13],[14,15,16]]
-        self.friendlyVel = [[5,6,7],[8,9,10],[11,12,13],[14,15,16]]
-        self.friendlyBatt = [1,2,3,4,5,6,7,8]
+        self.friendlyWorkingStatus =[True,True,True,True,True,True,True,True]
+        self.friendlyTaskStatus = [False, False, False, False, False, False, False, False]
+        self.friendlyTaskId = [1,2,3,4,5,6,7,8]
+        self.friendlyPos = [[5,6,7],[8,9,10],[11,12,13],[1,2,3],[5,6,7],[8,9,10],[11,12,13],[14,15,16]]
+        self.friendlyHeading = [1,1,1,1,1,1,1,1]
+        self.friendlyBatt = [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5]
         self.friendlyPayload = [True,True,True,True,True,True,True,True]
-        self.friendlyTimestamp = []
+        #self.friendlyW = 0
+        #self.friendlyTimestamp = 0
         
     def get_fooId(self):
         return self.fooId 

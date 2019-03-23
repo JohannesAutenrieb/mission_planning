@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
+
 from StageThreeStateMachine import StageThreeStateMachine, StageThreeState
 from Task import Task,TaskType
 import time
@@ -25,14 +27,15 @@ class MissionStageThree():
         self.EntryGoToWaypoint = False
         self.EntryLandInAOI = False
         self.EntryWaitOnGround = False
-        self.EntryTurnMotorsOff = False
         self.Entry = False
         self.Entry = False
         self.Entry = False
+
+        self.StageDone = False
         
         
 
-    def StageThree(self, currentFriendsInformation, currentEnemyInformation, TaskList):
+    def StageThree(self, agentsList, fooList, TaskList):
 
         
      
@@ -53,19 +56,14 @@ class MissionStageThree():
         
         if self.obj.state == 'hoverAtCurrentPosition':
             
-           if not (self.EntryStartMotor):
-           # Execute Payload Drop
-           # Create Task Objects handle the tasks for each agent
-               for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   TaskList.append( Task(currentFriendsInformation.friendlyId[i],TaskType.REPAINT.value,[1, 1, 1],0))
-                   #TaskList.append(self.Task)
-                   #del self.Task
-                   
-               self.EntryStartMotor = True
+           if not (self.EntryHover):
+           # Hover State
+               time.sleep(5)
+               self.EntryHover = True
                return
 
 	   # To-Do as long as in current State
-           print ("S3 - Hover at current Position")
+           print("S3: Agents hovering...")
            hoverTimeReached = True
            time.sleep(2)
 	   # Execution of Transition Check and Exit of current State	
@@ -77,25 +75,25 @@ class MissionStageThree():
         elif self.obj.state == 'goToWaypoint':
 
 	   # To-Do as long as in current State
-           print ("S3 - Go to Waypoint")
-           if not (self.EntryStartMotor):
+           if not (self.EntryGoToWaypoint):
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
-               f = open("/home/johannes/git/gdp_planning/src/mission_planning/scripts/MissionPlan/Stage_3_Attack.txt")
-               line = f.readlines(0)           
-               for i in range(0, len(currentFriendsInformation.friendlyId)):
+               deadline = 120
+               f = open(self.getRelativeFilePath("MissionPlan/Stage_3_Attack.txt"))
+               line = f.readlines(0)
+               print("S3: Setting waypoints")
+               for i in range(0, len(agentsList)):
                    waypoint = line[i].split(";")
                    del waypoint[-1] # delete last element with new line command 
                    waypoint = [int(x) for x in waypoint]              
-                   TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.WAYPOINT.value,waypoint,0))
-                   #askList.append(self.Task)
-                   #del self.Task
-                   
-               self.EntryStartMotor = True
+                   TaskList.append(Task(agentsList[i].agentId, 0, TaskType.WAYPOINT.value,waypoint,deadline))
+                   print "S3: Waypoint: {0} set for agent: {1}".format(waypoint, agentsList[i].agentId)
+                   self.EntryGoToWaypoint = True
                f.close() 
                return
-           
-           reachedAOI = True
+
+           print("S3: Agents going to waypoint...")
+           reachedAOI = self.allAgentsFinishedTask(agentsList)
            time.sleep(2)
            # Execution of Transition Check and Exit of current State
            if (reachedAOI):
@@ -105,69 +103,37 @@ class MissionStageThree():
                 
         elif self.obj.state == 'landInAOI':
 	   # To-Do as long as in current State
-           print ("S3 - Land in AOI")
-           if not (self.EntryStartMotor):
+           if not (self.EntryLandInAOI):
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
-               for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.LAND.value,[None]*3))
-                   #TaskList.append(self.Task)
-                   #del self.Task
-                   
-               self.EntryStartMotor = True
+               deadline = 180
+               for i in range(0, len(agentsList)):
+                   TaskList.append(Task(agentsList[i].agentId, 0, TaskType.LAND.value,[1, 1, 1],deadline))
+                   print "S3: Land order send to agent: %d" % agentsList[i].agentId
+               self.EntryLandInAOI = True
                return
-           touchedGround = True
+           touchedGround = self.allAgentsFinishedTask(agentsList)
            time.sleep(2)
            # Execution of Transition Check and Exit of current State
            if (touchedGround):
-                print ("We touched the ground in AOI")
                 #execute statemachine transition with trigger
                 self.mission.touchedGround()
 
         elif self.obj.state == 'waitOnGround':
 	   # To-Do as long as in current State
-           print ("S3 - Wait on Ground")
-           if not (self.EntryStartMotor):
-           # Execute Payload Drop
-           # Create Task Objects handle the tasks for each agent
-               waitingTime = 5
-               for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.WAIT.value,[None]*3,waitingTime))
-                   #TaskList.append(self.Task)
-                   #del self.Task
-                   
-               self.EntryStartMotor = True
+           if not (self.EntryWaitOnGround):
+           # Wait on Ground
+               time.sleep(5)                
+               self.EntryWaitOnGround = True
                return
            timeToTurnOff = True
            time.sleep(2)
            # Execution of Transition Check and Exit of current State
            if (timeToTurnOff):
-                print ("Time to wait is over")
-                #execute statemachine transition with trigger
-                self.mission.timeToTurnOff()
+                print("End of the mission")
+                self.StageDone = True
+                return self.StageDone
 
-        elif self.obj.state == 'TurnMotorsOff':
-	   # To-Do as long as in current State
-           print ("S3 - Turn motor off")
-           if not (self.EntryStartMotor):
-           # Execute Payload Drop
-           # Create Task Objects handle the tasks for each agent
-               for i in range(0, len(currentFriendsInformation.friendlyId)):
-                   TaskList.append(Task(currentFriendsInformation.friendlyId[i],TaskType.TURNOFF.value,[None]*3))
-                   #TaskList.append(self.Task)
-                   #del self.Task
-                   
-               self.EntryStartMotor = True
-               return
-           everthingShutDown = True
-           time.sleep(2)
-           # Execution of Transition Check and Exit of current State
-           if (everthingShutDown):
-                print ("Motor is turned off")
-                #Set time new to restart the countdown
-                return everthingShutDown
-    
-    
             #----------------------------------------------------------------------
             # WRITING PART: In This Part the Messages AND Parameters Are Read
             #----------------------------------------------------------------------        
@@ -181,4 +147,15 @@ class MissionStageThree():
             # WAITING PART: Wait for 1 sec before goig to next execution 
             #----------------------------------------------------------------------
 
+    def getRelativeFilePath(self, relativePath):
 
+        scriptDir = os.path.dirname(__file__)
+        absFilePath = os.path.join(scriptDir, relativePath)
+        return absFilePath
+
+    def allAgentsFinishedTask(self,agentsList):
+    #Loop over all friends to see if all fullfiled task
+        for i in range(0, len(agentsList)):
+            if(agentsList[i].taskStatus is True) and (agentsList[i].agentWorkingStatus is True):
+                return False
+        return True

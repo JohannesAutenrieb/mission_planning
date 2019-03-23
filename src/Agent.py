@@ -2,15 +2,16 @@
 class Agent():
     
     # Defined States in the Mission State Machine
-    def __init__(self,agentId,agentStatus,agentPos, agentOrient,taskStatus,agentBattery, agentPayload):
+    def __init__(self,agentId, agentPos, agentHeading, taskID, taskStatus, agentBattery, agentPayload):
         
         self.agentId = agentId
-        self.agentStatus = agentStatus
         self.agentPos = agentPos
-        self.agentOrient = agentOrient
-        self.taskStatus  = taskStatus
+        self.agentHeading = agentHeading
+        self.taskID = taskID
+        self.taskStatus = taskStatus
         self.agentBattery = agentBattery
         self.agentPayload = agentPayload
+        self.agentWorkingStatus = True
         self.lastReward = 0
 
     # Getter Functions
@@ -23,8 +24,8 @@ class Agent():
     def get_agentPos(self):
         return self.agentPos 
 
-    def get_agentOrient(self):
-        return self.agentOrient
+    def get_agentHeading(self):
+        return self.agentHeading
 
     def get_taskStatus(self):
         return self.taskStatus 
@@ -36,7 +37,10 @@ class Agent():
         return self.agentPayload
 
     def get_lastReward(self):
-        return self.curentReward 
+        return self.lastReward
+
+    def get_taskID(self):
+        return self.taskID
     
     
     # setter Functions
@@ -49,8 +53,8 @@ class Agent():
     def set_agentPos(self, agentPos):
         self.agentPos = agentPos
 
-    def set_agentOrient(self, agentOrient):
-        self.agentOrient = agentOrient
+    def set_agentHeading(self, agentHeading):
+        self.agentHeading = agentHeading
 
     def set_taskStatus(self, taskStatus):
         self.taskStatus = taskStatus
@@ -63,3 +67,6 @@ class Agent():
 
     def set_lastReward(self, lastReward):
         self.lastReward = lastReward
+
+    def set_taskID(self, taskID):
+        self.taskID = taskID
