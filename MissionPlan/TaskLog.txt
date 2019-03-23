@@ -1,0 +1,161 @@
+Task data 1553230503.0:
+Agent ID: 1 
+Target ID: 0 
+Task type: 1 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 120.0000 
+
+Agent ID: 2 
+Target ID: 0 
+Task type: 1 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 120.0000 
+
+Agent ID: 3 
+Target ID: 0 
+Task type: 1 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 120.0000 
+
+Agent ID: 4 
+Target ID: 0 
+Task type: 1 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 120.0000 
+
+Agent ID: 5 
+Target ID: 0 
+Task type: 1 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 120.0000 
+
+Agent ID: 6 
+Target ID: 0 
+Task type: 1 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 120.0000 
+
+Task data 1553230516.0:
+Agent ID: 1 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Agent ID: 2 
+Target ID: 0 
+Task type: 2 
+Task location: 4.0000 5.0000 6.0000 
+Deadline: 120.0000 
+
+Agent ID: 3 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Agent ID: 4 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Agent ID: 5 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Agent ID: 6 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Task data 1553230519.0:
+Agent ID: 5 
+Target ID: 2 
+Task type: 8 
+Task location: 20.0000 30.0000 40.0000 
+Deadline: 30.4959 
+
+Agent ID: 6 
+Target ID: 1 
+Task type: 8 
+Task location: 20.0000 30.0000 40.0000 
+Deadline: 25.8650 
+
+Task data 1553230588.01:
+Agent ID: 1 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Agent ID: 2 
+Target ID: 0 
+Task type: 2 
+Task location: 4.0000 5.0000 6.0000 
+Deadline: 120.0000 
+
+Agent ID: 3 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Agent ID: 4 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Agent ID: 5 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Agent ID: 6 
+Target ID: 0 
+Task type: 2 
+Task location: 1.0000 2.0000 3.0000 
+Deadline: 120.0000 
+
+Task data 1553230590.01:
+Agent ID: 1 
+Target ID: 0 
+Task type: 4 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 180.0000 
+
+Agent ID: 2 
+Target ID: 0 
+Task type: 4 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 180.0000 
+
+Agent ID: 3 
+Target ID: 0 
+Task type: 4 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 180.0000 
+
+Agent ID: 4 
+Target ID: 0 
+Task type: 4 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 180.0000 
+
+Agent ID: 5 
+Target ID: 0 
+Task type: 4 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 180.0000 
+
+Agent ID: 6 
+Target ID: 0 
+Task type: 4 
+Task location: 1.0000 1.0000 1.0000 
+Deadline: 180.0000 
+
