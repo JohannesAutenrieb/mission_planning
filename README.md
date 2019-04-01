@@ -1,6 +1,6 @@
 # TeamACranfieldUAVSwarm
 
-#### Discription
+### Discription
 This Software Project was created as part of a UAV Swarm Project in which a Cranfield Student Team Participated in the BAE Systems UAV Swarm Challenge.
 The software in this contains the Mission Control and Task Allocation which was used for the orchestration of the UAV Swarm. The sytems is embedded in a ROS Framwork which is able
 to communicate with other Subsytems such as the Agents Autopilot and the Situational Awarness Systems. The Software is able to process the receiving data from Situational Awarness (current Agent and Enemies Inforamtion) and using a mathmatical appraoch to choose suitable countermeasures.
@@ -12,8 +12,32 @@ The dynamic task allocation approach is to decompose complex multui-task mission
 * Jonker-Volgenant Algorithm
 * Stable-Marriage Algorithm
 
-The default Algorithm is the Kuhn–Munkres Algorithm since it is ensured that it delivers the optimal solution. The Jonker-Volgenant Algorithm is currently under testing, since it has the potential to solve the problem with an equal accuarcy by having a lower computational complexity.
+The default Algorithm is the Kuhn–Munkres Algorithm since it is ensured that it delivers the optimal solution. The Jonker-Volgenant Algorithm is currently under testing, since it has the potential to solve the problem with an sufficient accuarcy by having a lower computational complexity as the Kuhn–Munkres Algorithm.
 
+#### Mission Concept
+
+The full mission was seperated in to 3 stages:
+* Stage 1: Agent Setup
+* Stage 2: Asset Protection (Dynamic Task Allocation)
+* Stage 3: Landing 
+
+The distinct stages are implemented as a state machines which is using defined trigger to transit to the next stage. Inside of stage 1 and stage 3 sub-statemachines are implemented which are ensuring the correct agent workflows in those stages. Stage 2 is fully dynamic and is only using the dynamic task allocation approach as explained prior.
+
+<p align=center>
+<img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/blob/master/img/Statemachine_main.png" alt="Statemachine_main" height=500px>
+</p>
+
+#### Task Manger
+In order to create a fully autonomous mission system a task manager system has been implemented. The task manager is a independent system which is able to recognise task assignments and to monitor their progress. To do so process is computing a reward for each waypoint/attack progress of the agents. When it is recognised that the reward is not increasing over a defined time window the assigned task is getting aborted. The same is the case for a task execution which exceeds a certain time window. The time window is individualy computed/defined based on task, distance and flying speed.
+
+<p align=center>
+<img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/blob/master/img/System_Overview.png" alt="System_Overview" height=500px>
+</p>
+
+
+#### Graphical User Interface
+
+The GUI was created to simplify the mission overview for the user during the competition. The GUI-System is fully integrated in to the ROS Network System and is listining to the exchanged messages. Received information are displayed for the user in Mission Window which is based on the PyQT framework.
 
 <p align=center>
 <img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/blob/master/img/GUI_MISSION_OVERVIEW.png" alt="MISSION_GUI" height=500px>
@@ -21,7 +45,7 @@ The default Algorithm is the Kuhn–Munkres Algorithm since it is ensured that i
 
 
 
-#### Dependencies
+### Dependencies
 
 Install Rospy for Pyton 3.6:
 
