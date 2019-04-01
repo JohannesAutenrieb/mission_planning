@@ -16,7 +16,7 @@ The default Algorithm is the Kuhn–Munkres Algorithm since it is ensured that i
 
 
 <p align=center>
-<img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/blob/master/img/GUI_MISSION_OVERVIEW.png" alt="MISSION_GUI" height=300px>
+<img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/blob/master/img/GUI_MISSION_OVERVIEW.png" alt="MISSION_GUI" height=500px>
 </p>
 
 

@@ -1,2 +1,3 @@
 python-statemachine
-
+lap
+munkres==1.0.12
