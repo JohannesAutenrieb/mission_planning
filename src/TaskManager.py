@@ -13,17 +13,24 @@ from mission_planning.msg import TaskMessage, AgentInfo, SwarmInfo
 class TaskManager():
     
     def __init__(self):
-        # ROS Part in which all information of the swarm should been recieved and stored
+        """
+        ===========================================================
+        Constructor to create initial relevant Objects and global 
+        Variables
+        ===========================================================
+        :Parameters: None
+        	:return: None
+        ===========================================================
+        """
         
         # Instance to store all relevant data regarding the current tasks
         # Task list for storing the tasks which needs to be sended
         self.taskList = []
+        
         # Init of ROS Publisher for Task Messages
         self.pub = rospy.Publisher('TaskActions', TaskMessage, queue_size=1)
              
         #instance to store all relevant data regarding the current tasks
-        self.currentFriendsInformation = FriendStatus()
-        self.currentEnemyInformation = EnemyStatus()
         self.taskStatusList = []
         self.taskList = []
         self.agentsList = []
@@ -34,7 +41,15 @@ class TaskManager():
         
    # Callback for adding new tasks to current Database
     def callbackTaskMessages(self, data):
-
+        """
+        ==============================================================
+        Callback Function on receiving Task Messages from Statemachine
+        ==============================================================
+        :Parameters: SwarmInfo ROS Message
+    	
+        :return: None
+        ===========================================================
+        """
         if (data.taskId == TaskType.ABORTMISSION.value):
             for task in self.taskStatusList:
                 if data.agentId == task.agentId:
@@ -56,6 +71,15 @@ class TaskManager():
                                                       data.taskLocation, data.taskDeadline, data.timestamp))
 
     def callbackSystemStatusAgent(self, data):
+        """
+        ==============================================================
+        Callback Function on receiving Swarm Information Updates
+        ==============================================================
+        :Parameters: SwarmInfo ROS Message
+    	
+        :return: None
+        ===========================================================
+        """        
         #operation on Friend Information 
         print("System Status")
         for task in self.taskStatusList:
@@ -64,8 +88,17 @@ class TaskManager():
                 break
 
 
-    def callbackFriend(self, data):
-
+    def callbackSwarmInfo(self, data):
+        
+        """
+        ==============================================================
+        Callback Function on receiving Swarm Information Updates
+        ==============================================================
+        :Parameters: SwarmInfo ROS Message
+    	
+        :return: None
+        ===========================================================
+        """     
         # Extract friends information from message
         dataFriend = data.friendlies
 
@@ -118,6 +151,17 @@ class TaskManager():
 #==========================================================================================================
 
     def computeExecutionReward(self, agentPos, TaskWaypoint, initialPostion):
+        
+        """
+        ==============================================================
+        Computes the Reward for Waypoint and Attack Tasks for the agents
+        in order to supervise the progress
+        ==============================================================
+        :Parameters: reward (float64)
+    	
+        :return: None
+        ===========================================================
+        """ 
         # reward = d-a/d min: -x to max: 1 (-x when agent is increasing the distance between its position and given waypoint)
         d = math.sqrt((TaskWaypoint[0]-initialPostion[0])**2 + (TaskWaypoint[1]-initialPostion[1])**2 + (TaskWaypoint[2]-initialPostion[2])**2)
         a = math.sqrt((TaskWaypoint[0]-agentPos[0])**2 + (TaskWaypoint[1]-agentPos[1])**2 + (TaskWaypoint[2]-agentPos[2])**2)
@@ -125,14 +169,33 @@ class TaskManager():
         return reward
 
     def sendAbortMessage(self,AgentListidX, tasklist):
+        """
+        ==============================================================
+        Creates the abort message
+        ==============================================================
+        :Parameters: 
+            - AgentListidX (uint32)
+            - tasklist ([3] list of Tasks objects)
+    	
+        :return: None
+        ===========================================================
+        """
         # send message through ROS
         tasklist.append(Task(AgentListidX, 0, TaskType.ABORTMISSION.value,[1, 1, 1],0))
         
-    def sendSystemRequestMessage(self, AgentListidX, tasklist):
-        # send message through ROS
-        tasklist.append(Task(AgentListidX,0, TaskType.SYSTEMCHECK,[1, 1, 1],0))
 
     def taskProgress(self):
+        """
+        ==============================================================
+        Creates the abort message
+        ==============================================================
+        :Parameters: 
+            - AgentListidX (uint32)
+            - tasklist ([3] list of Tasks objects)
+    	
+        :return: None
+        ===========================================================
+        """
 
         # current time taking
         currentTime = time.time()
@@ -202,7 +265,7 @@ if __name__ == "__main__":
     rospy.init_node('TaskManagement', anonymous=True)
     
     # Init Listener for friend and foos
-    rospy.Subscriber("SwarmInformation", SwarmInfo, taskSupervision.callbackFriend)
+    rospy.Subscriber("SwarmInformation", SwarmInfo, taskSupervision.callbackSwarmInfo)
 
     # Init Listener to Task Topic
     rospy.Subscriber('TaskActions', TaskMessage, taskSupervision.callbackTaskMessages)

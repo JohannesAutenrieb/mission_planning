@@ -17,10 +17,15 @@ from mission_planning.msg import TaskMessage,TargetInformation, SwarmInfo
 class MissionExecution():
     
     def __init__(self):
-        
-        # ----------------------------------------------------------------------
-        # Init: Create relevant Objects and global Variables
-        # ----------------------------------------------------------------------
+        """
+        ===========================================================
+        Constructor to create initial relevant Objects and global 
+        Variables
+        ===========================================================
+        :Parameters: None
+        	:return: None
+        ===========================================================
+        """
 
         print(":::: MISSION INITIALIZATION :::: ")
 
@@ -46,9 +51,7 @@ class MissionExecution():
         self.StageThreeCompleted =False
         self.MissionDone = False
 
-        # Define the input data containers for friends:
-        # self.currentFriendsInformation = FriendStatus()
-        # self.currentEnemyInformation = EnemyStatus()
+        # Defining the input data containers for friends:
         self.agentsList = []
         self.fooList = []
         self.taskList = []
@@ -61,9 +64,16 @@ class MissionExecution():
         # Init of ROS Talker
         self.pub = rospy.Publisher('TaskAction', TaskMessage, queue_size=10)
 
-    def callbackFriend(self, msg):
-        #operation on recieved data
-        #print(data.data)
+    def callbackSwarmInfo(self, msg):
+        """
+        ==============================================================
+        Callback Function on receiving Swarm Informaion Data
+        ===========================================================
+        :Parameters: SwarmInfo ROS Message
+    	
+        :return: None
+        ===========================================================
+        """
 
         # Extract friends information from message
         dataFriend = msg.friendlies
@@ -119,86 +129,91 @@ class MissionExecution():
                 setattr(self.fooList[idx], 'confidence', dataFoo[i].confidence)
 
     def missionState(self):
-
-            # ----------------------------------------------------------------------
-            # READING PART: In This Part the Messages AND Parameters Are Read
-            # ---------------------------------------------------------------------- 
-            # Here the parameters have to be read
-            # ----------------- TO - DO -------------------------------------------
-            # ----------------------------------------------------------------------
-            # EXECUTION PART: In This Part The State Machine is Running
-            # ----------------------------------------------------------------------
-            #Dont do something unless you receive information from SA
-            #if len(self.currentFriendsInformation.friendlyId)<=0:
-                #return
+        """
+        	==============================================================
+         High Level statemachine of the Task Allocation System. In This Function
+         high Level Statemachine is executed and the ROS Messages for
+         each assigned task of the agents is send. 
+        	==============================================================
+         :Parameters: None	
+         :return: Missiondone (bool) -	 only when the Mission time is over
+         ===========================================================
+        """
 
     
-            # Set current time for this loop run
-            self.currentTime = time.time()
-            # Step : Go in to the State Machine and Execute relevant features
-    
-            if self.obj.state == 'stageOne':
-    
-    	   # To-Do as long as in current State
-               #Execute Stage One State Machine and return Boolean if executed
-               self.StageOneCompleted = self.stageOneState.StageOne(self.agentsList, self.fooList, self.taskList)
-               #print ("Status:", StageOne())
-    	   # Execution of Transition Check and Exit of current State	
-               if (self.StageOneCompleted):
-                   #execute statemachine transition with trigger
-                   print ("It's time to defend our assests Jedi! #MaytheForceBeWithYou")
-                   self.mission.triggerOne()
-                   
-            elif self.obj.state == 'stageTwo':
-    
-    	   # To-Do as long as in current State
-               self.taskAllocation.TaskAllocation(self.agentsList, self.fooList, self.taskList)
+        # Set current time for this loop run
+        self.currentTime = time.time()
+	    #================================================================
+	    # MAIN STATE MACHINE PART
+	    #================================================================
+
+        # Step : Go in to the State Machine and Execute relevant features    
+        if self.obj.state == 'stageOne':
+
+	   # To-Do as long as in current State
+           #Execute Stage One State Machine and return Boolean if executed
+           self.StageOneCompleted = self.stageOneState.StageOne(self.agentsList, self.fooList, self.taskList)
+           #print ("Status:", StageOne())
+	   # Execution of Transition Check and Exit of current State	
+           if (self.StageOneCompleted):
+               #execute statemachine transition with trigger
+               print ("It's time to defend our assests Jedi! #MaytheForceBeWithYou")
+               self.mission.triggerOne()
                
-               # Execution of Transition Check and Exit of current State
-               if (((self.currentTime-self.startTime)>=self.MaximumStageTwoTime)):
-                    #execute statemachine transition with trigger
-                     self.mission.triggerTwo()
-                    
-            elif self.obj.state == 'stageThree':
-    	   # To-Do as long as in current State
-               self.StageThreeCompleted = self.stageThreeState.StageThree(self.agentsList, self.fooList, self.taskList)
-               
-               # Execution of Transition Check and Exit of current State
-               if (self.StageThreeCompleted):
-                    print(":::: SYSTEM SHUTDOWN :::: ")
-                    self.MissionDone = True
-                    # Let's go and drink a beer
-                    return self.MissionDone
-                    
-            #----------------------------------------------------------------------
-            # WRITING PART: In This Part the Messages AND Parameters Are Read
-            # ----------------------------------------------------------------------
-    
-            # Here the variables have to be send to external processes and agents
-            #
-            #--- Handle Task before
-            #self.TaskList    
-            #self.pub.publish(self.TaskList)
+        elif self.obj.state == 'stageTwo':
 
-            if not len(self.taskList) == 0:
-                print("T: Sending tasks to agents")
-                for i in range(0, len( self.taskList)):
-                    msg = TaskMessage()
-                    msg.agentId = self.taskList[i].agentIdx
-                    msg.targetId = self.taskList[i].targetId
-                    msg.taskId = self.taskList[i].taskType
-                    msg.taskLocation = self.taskList[i].wayPointLocation
-                    msg.taskDeadline = self.taskList[i].taskDeadline
-                    msg.timestamp = time.time()
-                    self.pub.publish(msg)
-                    #clear message object
-                    del msg
-                #clear taesk lsit for next time step
-                del self.taskList[:]
-            # Wait for 1 sec before goig to next execution
-            print "MS::Length of TaskList: %d" % len(self.taskList)
+	   # To-Do as long as in current State
+           self.taskAllocation.TaskAllocation(self.agentsList, self.fooList, self.taskList)
+           
+           # Execution of Transition Check and Exit of current State
+           if (((self.currentTime-self.startTime)>=self.MaximumStageTwoTime)):
+                #execute statemachine transition with trigger
+                 self.mission.triggerTwo()
+                
+        elif self.obj.state == 'stageThree':
+	   # To-Do as long as in current State
+           self.StageThreeCompleted = self.stageThreeState.StageThree(self.agentsList, self.fooList, self.taskList)
+           
+           # Execution of Transition Check and Exit of current State
+           if (self.StageThreeCompleted):
+                print(":::: SYSTEM SHUTDOWN :::: ")
+                self.MissionDone = True
+                # Let's go and drink a beer
+                return self.MissionDone
+                
+        #================================================================
+        # TASK MESSAGES SENDING
+        #================================================================
+        # Here the defined tasks are send as ROS Messages
+
+        if not len(self.taskList) == 0:
+            print("T: Sending tasks to agents")
+            for i in range(0, len( self.taskList)):
+                msg = TaskMessage()
+                msg.agentId = self.taskList[i].agentIdx
+                msg.targetId = self.taskList[i].targetId
+                msg.taskId = self.taskList[i].taskType
+                msg.taskLocation = self.taskList[i].wayPointLocation
+                msg.taskDeadline = self.taskList[i].taskDeadline
+                msg.timestamp = time.time()
+                self.pub.publish(msg)
+                #clear message object
+                del msg
+            #clear taesk lsit for next time step
+            del self.taskList[:]
+        # Wait for 1 sec before goig to next execution
+        print "MS::Length of TaskList: %d" % len(self.taskList)
 
 if __name__ == "__main__":
+    """
+    ==============================================================
+    Main Loop of Task Allocation Software Loop
+    ==============================================================
+    :Parameters: None
+	
+    :return: None
+    ==============================================================
+    """
 
     print(":::: NODE INITIALIZATION :::: ")
 
@@ -207,7 +222,7 @@ if __name__ == "__main__":
     # Init of ROS Listener Node
     rospy.init_node('TaskAllocation', anonymous=True)  
     # Init Listener for friend and foos
-    rospy.Subscriber("SwarmInformation", SwarmInfo, missionExecution.callbackFriend)
+    rospy.Subscriber("SwarmInformation", SwarmInfo, missionExecution.callbackSwarmInfo)
 
     # spin() simply keeps python from exiting until this node is stopped
     rate = rospy.Rate(1)

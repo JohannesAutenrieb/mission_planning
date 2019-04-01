@@ -10,12 +10,16 @@ import time
 class MissionStageThree():
 
     def __init__(self):
-
-    
-        #----------------------------------------------------------------------
-        # Init: Create relevant Objects and global Variables
-        #----------------------------------------------------------------------
-    
+        """
+        ===========================================================
+        Constructor to create initial relevant Objects and global 
+        Variables
+        ===========================================================
+        :Parameters: None
+        	:return: None
+        ===========================================================
+        """
+        
         #State object to handle the states with initial state one
         self.obj = StageThreeState(state='hoverAtCurrentPosition')
         #state machine instance to handle the main state machine
@@ -36,37 +40,61 @@ class MissionStageThree():
         
 
     def StageThree(self, agentsList, fooList, TaskList):
-
+        """
+        ===========================================================
+        Stage Three Statemachine function which is executing the
+        initial static mission steps
+        ===========================================================
+        :Parameters: 
+            - AgentsList: 
+              A list which contains a lits of Agents obejct.The Agents object
+              represents a real entity and contains information about: 
+                  AgentID
+                  AgentPosition
+                  AgentVelocity
+                  TaskStatus
+                  TaskID
+                  SystemWorkingStatus
+                  
         
-     
-        #----------------------------------------------------------------------
-        # READING PART: In This Part the Messages AND Parameters Are Read
-        #----------------------------------------------------------------------        
-        
-        # Here the parameters have to be read
-
-        # ----------------- TO - DO -------------------------------------------
-        
-        #----------------------------------------------------------------------
-        # EXECUTION PART: In This Part The State Machine is Running
-        #----------------------------------------------------------------------
-        
-        #Set current time for this loop run
-        #Step : Go in to the State Machine and Execute relevant features
+                
+            - FoosList:
+              A list which contains a lits of target obejct.The foo object
+              represents a real targets and contains information about: 
+                  TargetID
+                  TargetPosition
+                  AgentVelocity
+                  AttackkStatus
+                  Confidence
+              
+            - TaskList:
+              A list which contains a lits of task obejct.The task object
+              object contains information of assigend tasks:
+                  AgentID
+                  TagetID
+                  TaskID
+                  TaskLocation/Waypoint
+                  TaskDeadLine
+                
+        	:return: None
+        ===========================================================
+        """
         
         if self.obj.state == 'hoverAtCurrentPosition':
             
+           # ======== Entry ========
            if not (self.EntryHover):
            # Hover State
                time.sleep(5)
                self.EntryHover = True
                return
 
-	   # To-Do as long as in current State
+        	   # ====Main Part ========
            print("S3: Agents hovering...")
            hoverTimeReached = True
            time.sleep(2)
-	   # Execution of Transition Check and Exit of current State	
+           
+           # ===== Exit ========		
            if (hoverTimeReached):
                #execute statemachine transition with trigger
                self.mission.hoverTimeReached()
@@ -74,8 +102,9 @@ class MissionStageThree():
                
         elif self.obj.state == 'goToWaypoint':
 
-	   # To-Do as long as in current State
+	       # ======== Entry ========
            if not (self.EntryGoToWaypoint):
+               
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
                deadline = 120
@@ -91,18 +120,21 @@ class MissionStageThree():
                    self.EntryGoToWaypoint = True
                f.close() 
                return
-
+           
+            # ====Main Part ========
            print("S3: Agents going to waypoint...")
            reachedAOI = self.allAgentsFinishedTask(agentsList)
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           # ===== Exit ========
            if (reachedAOI):
                 #execute statemachine transition with trigger
                 self.mission.reachedAOI()
 
                 
         elif self.obj.state == 'landInAOI':
-	   # To-Do as long as in current State
+            
+	      # ======== Entry ========
            if not (self.EntryLandInAOI):
            # Execute Payload Drop
            # Create Task Objects handle the tasks for each agent
@@ -112,49 +144,76 @@ class MissionStageThree():
                    print "S3: Land order send to agent: %d" % agentsList[i].agentId
                self.EntryLandInAOI = True
                return
+           
+            # ====Main Part ========
            touchedGround = self.allAgentsFinishedTask(agentsList)
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           # ===== Exit ========
            if (touchedGround):
                 #execute statemachine transition with trigger
                 self.mission.touchedGround()
 
         elif self.obj.state == 'waitOnGround':
-	   # To-Do as long as in current State
+            
+	      # ======== Entry ========
            if not (self.EntryWaitOnGround):
            # Wait on Ground
                time.sleep(5)                
                self.EntryWaitOnGround = True
                return
+           
+           # ====Main Part ========
+           # System Turnsoff automaticly when landed therefore the flag just
+           # set True
            timeToTurnOff = True
            time.sleep(2)
-           # Execution of Transition Check and Exit of current State
+           
+           # ===== Exit ========
            if (timeToTurnOff):
                 print("End of the mission")
                 self.StageDone = True
                 return self.StageDone
 
-            #----------------------------------------------------------------------
-            # WRITING PART: In This Part the Messages AND Parameters Are Read
-            #----------------------------------------------------------------------        
-            
-            # Here the variables have to be send to external processes and agents
-            
-            # ----------------- TO - DO -------------------------------------------
-                    
-    
-            #----------------------------------------------------------------------
-            # WAITING PART: Wait for 1 sec before goig to next execution 
-            #----------------------------------------------------------------------
 
     def getRelativeFilePath(self, relativePath):
+        """
+        ==============================================================
+        Function to setup correct abolute path for rading the .txt file 
+        for predefined agent positions
+        ===========================================================
+        :Parameters:
+            - relativePath: String which contains the relative path of
+              file
+    	
+        :return: absFilePath - absolute file path for further use
+        ===========================================================
+        """       
 
         scriptDir = os.path.dirname(__file__)
         absFilePath = os.path.join(scriptDir, relativePath)
         return absFilePath
 
     def allAgentsFinishedTask(self,agentsList):
-    #Loop over all friends to see if all fullfiled task
+        """
+        ==============================================================
+        Function to recognize if all agents are free for new task in
+        order to go further to next state of the statemachine
+        ===========================================================
+        :Parameters:
+            - AgentsList: 
+              A list which contains a lits of Agents obejct.The Agents object
+              represents a real entity and contains information about: 
+                  AgentID
+                  AgentPosition
+                  AgentVelocity
+                  TaskStatus
+                  TaskID
+                  SystemWorkingStatus
+    	
+        :return: True if all finished - False if still agents in work
+        ===========================================================
+        """
         for i in range(0, len(agentsList)):
             if(agentsList[i].taskStatus is True) and (agentsList[i].agentWorkingStatus is True):
                 return False

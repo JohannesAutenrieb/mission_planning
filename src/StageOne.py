@@ -8,11 +8,15 @@ import rospy
 class MissionStageOne():
      
     def __init__(self):
-
-        #----------------------------------------------------------------------
-        # Init: Create relevant Objects and global Variables
-        #----------------------------------------------------------------------
-    
+        """
+        ===========================================================
+        Constructor to create initial relevant Objects and global 
+        Variables
+        ===========================================================
+        :Parameters: None
+        	:return: None
+        ===========================================================
+        """
         # take initial time
         self.start = time.time()
         self.Task = []
@@ -38,27 +42,52 @@ class MissionStageOne():
 
 
     def StageOne(self, agentsList, foosList, TaskList):
-    
-       
-        #----------------------------------------------------------------------
-        # READING PART: In This Part the Messages AND Parameters Are Read
-        #----------------------------------------------------------------------        
+        """
+        ===========================================================
+        Stage One Statemachine function which is executing the
+        initial static mission steps
+        ===========================================================
+        :Parameters: 
+            - AgentsList: 
+              A list which contains a lits of Agents obejct.The Agents object
+              represents a real entity and contains information about: 
+                  AgentID
+                  AgentPosition
+                  AgentVelocity
+                  TaskStatus
+                  TaskID
+                  SystemWorkingStatus
+                  
         
-        # ----------------- TO - DO -------------------------------------------
-        
-        #----------------------------------------------------------------------
-        # EXECUTION PART: In This Part The State Machine is Running
-        #----------------------------------------------------------------------
-
+                
+            - FoosList:
+              A list which contains a lits of target obejct.The foo object
+              represents a real targets and contains information about: 
+                  TargetID
+                  TargetPosition
+                  AgentVelocity
+                  AttackkStatus
+                  Confidence
+              
+            - TaskList:
+              A list which contains a lits of task obejct.The task object
+              object contains information of assigend tasks:
+                  AgentID
+                  TagetID
+                  TaskID
+                  TaskLocation/Waypoint
+                  TaskDeadLine
+                
+        	:return: None
+        ===========================================================
+        """   
         
         #Set current time for this loop run
         self.currentTime= time.time()
         #Step : Go in to the State Machine and Execute relevant features
         
         if self.StateOne.state == 'startMotor':
-
-	   # To-Do as long as in current State
-
+           # ======== Entry ========
            if not (self.EntryStartMotor):
 
             # Wait until first agent data arrives
@@ -83,7 +112,7 @@ class MissionStageOne():
            
            time.sleep(2)
            
-	   # Execution of Transition Check and Exit of current State	
+           #====== Exit ========	
            if (self.allAgentsReachedAllAltitude):
                #execute statemachine transition with trigger
                self.StageOneState.reachedAlitude()
@@ -93,9 +122,7 @@ class MissionStageOne():
 
         elif self.StateOne.state == 'hover':
 
-	   # To-Do as long as in current State
-
-           #Entry
+           # ======== Entry ========
            if not (self.EntryhoverState):
            #Execute Payload Drop
            # Create Task Objects
@@ -103,7 +130,7 @@ class MissionStageOne():
                self.EntryhoverState = True
                return
                
-           ## ==Main Part ========
+           ## ======== Main Part ========
            self.current = time.time()          
            #time.sleep(5)
            print("S1: Agents hovering...")
@@ -114,14 +141,14 @@ class MissionStageOne():
                self.hoverTimeReached = False
                
            
-           #Exit of current State
+           #======== Exit ========
            if (self.hoverTimeReached):
                # Execution of Transition
                 self.StageOneState.hoverTimeReached()
 
         elif self.StateOne.state == 'goToAOI':
-	   # To-Do as long as in current State
-           #Entry
+
+            # ======== Entry ========
            if not (self.EntryBackHome):
            #Execute Payload Drop
            # Send Task
@@ -138,19 +165,20 @@ class MissionStageOne():
                f.close()
                self.EntryBackHome = True
                return
+           
            ## ==Main Part ========
            print("S1: Agents going to waypoint...")
            self.allAgentsBackInAOI =self.allAgentsFinishedTask(agentsList)
            #time.sleep(20)
            
-           #Exit of current State
+           # ======== Exit ========
            if (self.allAgentsBackInAOI):
                 #execute statemachine transition with trigger
                 self.StageOneState.BackInAOI()
 
         elif self.StateOne.state == 'hoverInAOI':
-	   # To-Do as long as in current State
-           #Entry
+
+            # ======== Entry ========
            if not (self.EntryDefendStart):
            #Execute Payload Drop
            # Create Task Objects
@@ -164,39 +192,78 @@ class MissionStageOne():
            self.readyToDefend = self.allAgentsFinishedTask(agentsList)
            #time.sleep(hoverTime)
            
-           #Exit of current State
+           # ======== Exit ========
            if (self.readyToDefend):
                 #execute statemachine transition with trigger
                 return self.readyToDefend
 
-            #----------------------------------------------------------------------
-            # WRITING PART: In This Part the Messages AND Parameters Are Read
-            #----------------------------------------------------------------------        
-            
-            # Here the variables have to be send to external processes and agents
-            
-            # ----------------- TO - DO -------------------------------------------
-                    
-    
-            #----------------------------------------------------------------------
-            # WAITING PART: Wait for 1 sec before goig to next execution 
-            #----------------------------------------------------------------------
-            #time.sleep(1)
                 
     def allAgentsFinishedTask(self,agentsList):
-    #Loop over all friends to see if all fullfiled task
+        """
+        ==============================================================
+        Function to recognize if all agents are free for new task in
+        order to go further to next state of the statemachine
+        ===========================================================
+        :Parameters:
+            - AgentsList: 
+              A list which contains a lits of Agents obejct.The Agents object
+              represents a real entity and contains information about: 
+                  AgentID
+                  AgentPosition
+                  AgentVelocity
+                  TaskStatus
+                  TaskID
+                  SystemWorkingStatus
+    	
+        :return: True if all finished - False if still agents in work
+        ===========================================================
+        """
+        #Loop over all friends to see if all fullfiled task
         for i in range(0, len(agentsList)):
             if (agentsList[i].taskStatus is True) and (agentsList[i].agentWorkingStatus is True):
                 return False
         return True
 
     def getRelativeFilePath(self, relativePath):
+        """
+        ==============================================================
+        Function to setup correct abolute path for rading the .txt file 
+        for predefined agent positions
+        ===========================================================
+        :Parameters:
+            - relativePath: String which contains the relative path of
+              file
+    	
+        :return: absFilePath - absolute file path for further use
+        ===========================================================
+        """
 
         scriptDir = os.path.dirname(__file__)
         absFilePath = os.path.join(scriptDir, relativePath)
         return absFilePath
 
     def sendInitMessages(self, agentsList):
+        """
+        ==============================================================
+        Function which sends a Init Message to all agents to change
+        the home location from the take off position to a location on
+        enemies area
+        ===========================================================
+        :Parameters:
+            - AgentsList: 
+              A list which contains a lits of Agents obejct.The Agents object
+              represents a real entity and contains information about: 
+                  AgentID
+                  AgentPosition
+                  AgentVelocity
+                  TaskStatus
+                  TaskID
+                  SystemWorkingStatus
+    	
+    	
+        :return: None
+        ===========================================================
+        """
 
         # Init of ROS Publisher for Initialization Message
         pubInit = rospy.Publisher('InitInformation', InitMessage, queue_size=10)
