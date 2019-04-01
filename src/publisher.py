@@ -32,6 +32,7 @@ def talker():
         enemy = EnemyInfo()
         enemy.agentId = i + 1
         enemy.agentPosition = [8 * i + 1, 8 * i + 2, 8 * i + 3]
+	enemy.agentVelocity = [ 2, 3, 4]
         enemy.confidence = 0.75
 
         enemyList.append(enemy)

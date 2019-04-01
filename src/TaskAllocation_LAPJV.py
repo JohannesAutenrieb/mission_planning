@@ -1,8 +1,18 @@
 import math
 from operator import itemgetter
 from Task import Task, TaskType
+from munkres import Munkres, print_matrix
+import numpy as np
+from lap import lapjv
 
-class TaskAllocation():
+class TaskAllocation_LAPJV():
+    def __init__(self):
+        
+        # ----------------------------------------------------------------------
+        # Init: Create relevant Objects and global Variables
+        # ----------------------------------------------------------------------
+
+        self.m = Munkres()
     
     def TaskAssignment(self, agentsList, fooList):
 
@@ -44,10 +54,13 @@ class TaskAllocation():
         batteryTreshold = 0.3    # [%]
 
         # Task allocation algorithm containers
-        costList = list()               # List of cost function values
-        foosPreferences = dict()        # Dictionary: key - foo index | value - friend index
-        friendsPreferences = dict()     # Dictionary: key - friend index | value - foo index
-        deadlineDict = dict()           # Dictionary: key - (friend index,  foo index) | value - deadline
+        costMatrix = list()               # List of cost function values
+        costEnemy = list()                # List of cost function values
+        deadlineList = list()        # List of cost function values
+        deadLineMatrix = list()        # List of cost function values
+        foosPreferences = dict()          # Dictionary: key - foo index | value - friend index
+        friendsPreferences = dict()       # Dictionary: key - friend index | value - foo index
+        deadlineDict = dict()             # Dictionary: key - (friend index,  foo index) | value - deadline
 
 
         #----------------------------------------------------------------------
@@ -65,60 +78,61 @@ class TaskAllocation():
                     if (friend.agentBattery > batteryTreshold) and (friend.taskStatus is False) and (friend.agentWorkingStatus is True):
 
                         #x-position of all target drones
-                        distance = self.compute_distance(enemy.agentPos, friend.agentPos)
+                        distance = self.compute_distance(enemy.agentFuturePositon, friend.agentPos)
                         distanceNormalized = distance/maxDistance
                         currentCost = weightBias + weightDistance*distanceNormalized + weightPayload*friend.agentPayload + weightBaterystatus/friend.agentBattery
                         deadline = (distance / minimumSpeed)+20
+                        
+                        costEnemy.append(currentCost)
+                        deadlineList.append(deadline)
 
-                        # Append cost function value to the list [foo, friend, cost]
-                        costList.append([enemy.agentId, friend.agentId, currentCost])
-                        # Append deadline value to the list [foo, friend, deadline]
-                        deadlineDict[(enemy.agentId, friend.agentId)] = deadline
-
-        # Sort costList by cost value (in ascending order)
-        sortedCostList = sorted(costList, key=itemgetter(2))
-
-        # Create dictionaries with friends and foos preferences
-        # foosPreferences: Foo index is a key, list of agent indices is value
-            # List of agents is sorted so that respective cost function values are ascending
-        # friendsPreferences: Friend index is a key, list of foos indices is value
-            # List of foos is sorted so that respective cost function values are ascending
-        for row in sortedCostList:
-            # If key is in dictionary
-            if row[0] in foosPreferences:
-                foosPreferences[row[0]].append(row[1])
-            # If key is not yet in dictionary
-            else:
-                foosPreferences[row[0]] = [row[1]]
-            # If key is in dictionary
-            if row[1] in friendsPreferences:
-                friendsPreferences[row[1]].append(row[0])
-            # If key is not yet in dictionary
-            else:
-                friendsPreferences[row[1]] = [row[0]]
-
-        # Sort list list of foos preferences by key
-        sortedFoosPrefs = sorted(foosPreferences.keys())
-
-        # Get the list of assignments
-        matches = self.MatchMaker(sortedFoosPrefs, foosPreferences, friendsPreferences)
-
+                # Append cost values value to the matrix
+                costMatrix.append(costEnemy)
+                deadLineMatrix.append(deadlineList)
+                costEnemy=[]
+                deadlineList=[]
+#                # Append deadline value to the list [foo, friend, deadline]
+#                deadlineDict[(enemy.agentId, friend.agentId)] = deadline
+        
+        #Evaluate the Cost Matrix of the current run
+        # Switch columns to rows
+        costMatrix = map(list,map(None,*costMatrix))
+	print("COST BEFORE",costMatrix)
+	
+	# Cast from python list to numpy array
+	costMatrix = np.array(costMatrix, dtype=float)
+	print("COST AFTER",costMatrix)
+        
+        # Computing of Jonker-Volgenant Algorithm on current Cost Matrix
+	# Input: Costmatrix, Setting no cost value return and internal extension of non-quadratic matrix to quadratic matrix	
+	
+	index = lapjv(costMatrix,  return_cost=False, extend_cost=True)
+	print("INDEX: ",index)	
+	print("INDEX TYPE: ",type(index))
+	assignementList = index[1].tolist()
+	print("Friends-Id that attack ENEMY: ",assignementList)
         # Add chose friend to index list and add target position as waypoint
         # closestFriendIdx = int(closestFriendIdx)
         print("S2:: Task assignment ::")
-        for match in matches.items():
-            friendId = match[0]
-            enemyId = match[1]
-            enemyIdx = next(i for i, friend in enumerate(fooList) if friend.agentId == match[1])
-            agentsWithTask.append(friendId)
-            attackedTargets.append(enemyId)
-            # AttackPosition is always ten meter before detected position
-            attackWaypoint.append(fooList[enemyIdx].agentPos)
-            estimatedDeadline.append(deadlineDict[(enemyId, friendId)])
-            # Change enemy's attack status to True
-            setattr(fooList[enemyIdx], 'attackStatus', True)
-            setattr(fooList[enemyIdx], 'attackingAgent', friendId)
-            print("Agent: ", friendId, "attacks foo: ", enemyId)
+	#for enemyIdx in index[1]:
+	for  friendIdx in assignementList:
+	    #friendIdx = row
+	    #enemyIdx = column
+	    enemyIdx = assignementList.index(friendIdx)
+	    #print("ENEMY: ",enemyIdx)
+	    print("FRIEND: ",friendIdx, type(friendIdx))
+	    friendId = friendIdx +1
+	    enemyId = enemyIdx + 1
+	    
+	    agentsWithTask.append(friendId)
+	    attackedTargets.append(enemyId)
+	    # AttackPosition is always ten meter before detected position
+	    attackWaypoint.append(fooList[enemyIdx].agentFuturePositon)
+	    estimatedDeadline.append(deadLineMatrix[enemyIdx][friendIdx])
+	    # Change enemy's attack status to True
+	    setattr(fooList[enemyIdx], 'attackStatus', True)
+	    setattr(fooList[enemyIdx], 'attackingAgent', friendId)
+	    print("Agent: ", friendId, "attacks foo: ", enemyId)
 
         print('-------------------------------------')
         print("S2: Attack status:")
@@ -128,7 +142,7 @@ class TaskAllocation():
         print("Deadlines: ", estimatedDeadline)
         print('-------------------------------------')
 
-        del costList[:]
+       
         foosPreferences.clear()
         friendsPreferences.clear()
         deadlineDict.clear()

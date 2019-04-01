@@ -6,7 +6,7 @@ from StageThree import MissionStageThree
 from EnemyStatus import EnemyStatus
 from FriendStatus import FriendStatus
 from Task import Task, TaskType
-from TaskAllocation import TaskAllocation
+from TaskAllocation_LAPJV import TaskAllocation_LAPJV
 from Agent import Agent
 from Enemy import Enemy
 import datetime
@@ -28,7 +28,7 @@ class MissionExecution():
         self.startTime = time.time()
         
         #Mission Stage Times in seconds (currently not real time)
-        self.TotalMissionTime = 500
+        self.TotalMissionTime = 200
         self.StageThreeTime = 120
         self.MaximumStageTwoTime = self.TotalMissionTime - self.StageThreeTime
         
@@ -39,11 +39,11 @@ class MissionExecution():
         self.mission = MissionStateMachine(self.obj)   
         self.stageOneState= MissionStageOne()
         self.stageThreeState= MissionStageThree()
-        self.taskAllocation = TaskAllocation()
+        self.taskAllocation = TaskAllocation_LAPJV()
         
         #Set up of initial state status (inital state one)
-        self.StageOneCompleted = False
-        self.StageThreeCompleted = False
+        self.StageOneCompleted =False
+        self.StageThreeCompleted =False
         self.MissionDone = False
 
         # Define the input data containers for friends:
@@ -59,39 +59,11 @@ class MissionExecution():
         self.fooTimestamp = [] 
         
         # Init of ROS Talker
-        self.pub = rospy.Publisher('TaskActions', TaskMessage, queue_size=10)
+        self.pub = rospy.Publisher('TaskAction', TaskMessage, queue_size=10)
 
     def callbackFriend(self, msg):
         #operation on recieved data
         #print(data.data)
-
-        # Extract foos information from message
-        dataFoo = msg.enemies
-
-        # Search for enemies from the current list that are not in the updated list and remove them
-        idxToDelete = []
-        for i in range(0, len(self.fooList)):
-            if not any(self.fooList[i].agentId == foo.agentId for foo in dataFoo):
-                idxToDelete.append(i)
-        for i in range(0, len(idxToDelete)):
-            del self.fooList[i]
-
-        # Iter over list of messages
-        for i in range(0, len(dataFoo)):
-            # If enemy is not on the list, append new enemy object
-            if not any(foo.agentId == dataFoo[i].agentId for foo in self.fooList):
-                self.fooList.append(Enemy(dataFoo[i].agentId, dataFoo[i].agentPosition, dataFoo[i].confidence))
-            # Else update enemy attributes
-            else:
-                # Find index of agent with given Id in the friendsList
-                idx = None
-                for e in self.fooList:
-                    if e.agentId == dataFoo[i].agentId:
-                        idx = self.fooList.index(e)
-                        break
-                setattr(self.fooList[idx], 'agentId', dataFoo[i].agentId)
-                setattr(self.fooList[idx], 'agentPos', dataFoo[i].agentPosition)
-                setattr(self.fooList[idx], 'confidence', dataFoo[i].confidence)
 
         # Extract friends information from message
         dataFriend = msg.friendlies
@@ -109,9 +81,6 @@ class MissionExecution():
                     if a.agentId == dataFriend[i].agentId:
                         idx = self.agentsList.index(a)
                         break
-                # Change attack status of enemies
-                self.changeEnemyAttackStatus(dataFriend[i], self.agentsList[idx])
-
                 setattr(self.agentsList[idx], 'agentWorkingStatus', dataFriend[i].agentWorkingStatus)
                 setattr(self.agentsList[idx], 'agentPosi', dataFriend[i].agentPosition)
                 setattr(self.agentsList[idx], 'agentHeading', dataFriend[i].agentHeading)
@@ -120,16 +89,34 @@ class MissionExecution():
                 setattr(self.agentsList[idx], 'agentBattery', dataFriend[i].agentBattery)
                 setattr(self.agentsList[idx], 'agentPayload', dataFriend[i].agentPayload)
 
-    def changeEnemyAttackStatus(self, friendMsg, friendPrevious):
-        if (friendMsg.agentTaskId == 0) and (friendPrevious.taskID == TaskType.ATTACK.value):
-            # Find the foo that was attacked by this agent
-            for foo in self.fooList:
-                if foo.attackingAgent == friendPrevious.agentId:
-                    # Change foo attack status
-                    print "T: Foo %d attack status changed to False" % foo.agentId
-                    setattr(foo, 'attackStatus', False)
-                    setattr(foo, 'attackingAgent', 0)
-                    break
+        # Extract foos information from message
+        dataFoo = msg.enemies
+
+        # Search for enemies from the current list that are not in the updated list and remove them
+        idxToDelete = []
+        for i in range(0, len(self.fooList)):
+            if not any(self.fooList[i].agentId == foo.agentId for foo in dataFoo):
+                idxToDelete.append(i)
+        for i in range(0, len(idxToDelete)):
+                del self.fooList[i]
+
+        # Iter over list of messages
+        for i in range(0, len(dataFoo)):
+            # If enemy is not on the list, append new enemy object
+            if not any(foo.agentId == dataFoo[i].agentId for foo in self.fooList):
+                self.fooList.append(Enemy(dataFoo[i].agentId, dataFoo[i].agentPosition, dataFoo[i].agentVelocity, dataFoo[i].confidence))
+            # Else update agent attributes
+            else:
+                # Find index of agent with given Id in the friendsList
+                idx = None
+                for e in self.fooList:
+                    if e.agentId == dataFoo[i].agentId:
+                        idx = self.fooList.index(e)
+                        break
+                setattr(self.fooList[idx], 'agentId', dataFoo[i].agentId)
+                setattr(self.fooList[idx], 'agentPos', dataFoo[i].agentPosition)
+                setattr(self.fooList[idx], 'agentVel', dataFoo[i].agentVelocity)
+                setattr(self.fooList[idx], 'confidence', dataFoo[i].confidence)
 
     def missionState(self):
 
@@ -170,9 +157,7 @@ class MissionExecution():
                # Execution of Transition Check and Exit of current State
                if (((self.currentTime-self.startTime)>=self.MaximumStageTwoTime)):
                     #execute statemachine transition with trigger
-                    for agent in self.agentsList:
-                        self.taskList.append(Task(agent.agentId, 0, TaskType.ABORTMISSION.value, [1,1,1], 0))
-                    self.mission.triggerTwo()
+                     self.mission.triggerTwo()
                     
             elif self.obj.state == 'stageThree':
     	   # To-Do as long as in current State
@@ -208,11 +193,10 @@ class MissionExecution():
                     self.pub.publish(msg)
                     #clear message object
                     del msg
-                # Wait for 1 sec before goig to next execution
-                print "MS::Length of TaskList: %d" % len(self.taskList)
                 #clear taesk lsit for next time step
                 del self.taskList[:]
-
+            # Wait for 1 sec before goig to next execution
+            print "MS::Length of TaskList: %d" % len(self.taskList)
 
 if __name__ == "__main__":
 
