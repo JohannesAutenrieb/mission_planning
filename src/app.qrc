@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="/images"/>
+  <qresource prefix="newPrefix">
+    <file>img/Cranfield_Logo_2.png</file>
+    <file>img/capure.png</file>
+    <file>img/baesystems_logo.png</file>
+  </qresource>
+  <qresource prefix="newPrefix">
+    <file>img/competition.area.png</file>
+    <file>img/Capture.bmp</file>
+  </qresource>
+  <qresource prefix="newPrefix">
+    <file>img/cranfield_logo.png</file>
+  </qresource>
+</RCC>
