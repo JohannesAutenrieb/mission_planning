@@ -1,7 +1,7 @@
 # TeamACranfieldUAVSwarm
 
 <p align=center>
-<img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/img/GUI_MISSION_OVERVIEW.png" alt="Trick Logo" height=150px>
+<img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/blob/master/img/GUI_MISSION_OVERVIEW.png" alt="MISSION_GUI" height=150px>
 </p>
 
 
