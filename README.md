@@ -1,7 +1,7 @@
 # TeamACranfieldUAVSwarm
 
 <p align=center>
-<img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/blob/master/img/GUI_MISSION_OVERVIEW.png" alt="MISSION_GUI" height=800px>
+<img src="https://github.com/JohannesAutenrieb/TeamACranfieldUAVSwarm/blob/master/img/GUI_MISSION_OVERVIEW.png" alt="MISSION_GUI" height=300px>
 </p>
 
 
@@ -38,31 +38,27 @@ Next Step is to create a new package in that worksapce:
 
 After this you need to ajust your CMakeLists.txt file and your package.xml in order to make the needed customized ROS packages known to the ROS framework. Please search for the part in which the messages are generated **add_message_files()**
 and please substitute with the following code part:
-'''
 	
- add_message_files(
-   FILES
-   TaskMessage.msg
-   AgentInfo.msg
-   SwarmInformation.msg
-   TargetInformation.msg
-   TaskStatusMessage.msg
-   RewardMessage.msg
-   TaskStatusInformation.msg
-   SystemStatusMessage.msg
-   InitMessage.msg
-   SwarmInfo.msg
-   EnemyInfo.msg
-)
-
-
-'''
+	 add_message_files(
+	   FILES
+	   TaskMessage.msg
+	   AgentInfo.msg
+	   SwarmInformation.msg
+	   TargetInformation.msg
+	   TaskStatusMessage.msg
+	   RewardMessage.msg
+	   TaskStatusInformation.msg
+	   SystemStatusMessage.msg
+	   InitMessage.msg
+	   SwarmInfo.msg
+	   EnemyInfo.msg
+	   )
 
 
 
 License
 -------
 
-Released under the 2-clause BSD license, see `LICENSE`.
+Released under the 2-clause GPL GNU license, see `LICENSE`.
 
-Copyright (C) 2012-2017, Tomas Kazmar
+Copyright (C) 2019, Johannes Autenrieb and Natalia Strawa
