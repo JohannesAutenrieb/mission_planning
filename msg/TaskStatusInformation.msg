@@ -1,0 +1,11 @@
+float64 lastUpdate
+int8 taskType
+uint8 agentId
+bool systemWorkingStatus 
+int8[3] initialPostion
+int8[3] currentPostion
+int8[3] wayPoint
+float64 lastReward 
+float64 taskDeadline
+float64 timestampOfTask
+uint8 targetId

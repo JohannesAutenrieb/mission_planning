@@ -1,0 +1,9 @@
+uint8 agentId
+float64[3] agentPosition
+float64 agentHeading
+float64 agentBattery
+bool agentPayload
+bool agentTaskStatus
+uint8 agentTaskId
+bool agentWorkingStatus
+float64 taskDeadline

@@ -1,0 +1,2 @@
+AgentInfo[] friendlies
+EnemyInfo[] enemies
