@@ -1,18 +1,16 @@
 # TeamACranfieldUAVSwarm
 
 ### Discription
-This Software Project was created as part of a UAV Swarm Project in which a Cranfield Student Team Participated in the BAE Systems UAV Swarm Challenge.
-The software in this contains the Mission Control and Task Allocation which was used for the orchestration of the UAV Swarm. The sytems is embedded in a ROS Framwork which is able
-to communicate with other Subsytems such as the Agents Autopilot and the Situational Awarness Systems. The Software is able to process the receiving data from Situational Awarness (current Agent and Enemies Inforamtion) and using a mathmatical appraoch to choose suitable countermeasures.
+This Software Project was created as part of a UAV Swarm Project in which a Cranfield Student Team participated in the BAE Systems UAV Swarm Challenge. The software contains the Mission Control and Task Allocation system which was utilised for the orchestration of the UAV Swarm. The sytems is embedded in a ROS Framwork which is able to communicate with other Subsytems such as the Agents Autopilot and the Situational Awarness Systems (these software parts are not part of this repository). The Software is able to process the receiving data from Situational Awarness (current Agent and Enemies Inforamtion) and using a combinatorial optimization appraoch to choose suitable countermeasures against incoming threads.
 
 #### Task Allocation Appraoch
 
-The dynamic task allocation approach is to decompose complex multui-task missions in to single-task steos. This simplfies the assignment problem from a complex optimization to a problem which can be solved in optimal manner with linear programming appraoches. For solving this combinatorial optimization problem following algorithms are utilized:
+The dynamic task allocation approach is to decompose complex multui-task missions in to single-tasks. This simplfies the assignment problem from a complex optimization to a problem which can be solved in optimal manner with linear programming appraoches. For solving this optimization problem following algorithms are utilized:
 * Kuhn–Munkres Algorithm
 * Jonker-Volgenant Algorithm
 * Stable-Marriage Algorithm
 
-The default Algorithm is the Kuhn–Munkres Algorithm since it is ensured that it delivers the optimal solution. The Jonker-Volgenant Algorithm is currently under testing, since it has the potential to solve the problem with an sufficient accuarcy by having a lower computational complexity as the Kuhn–Munkres Algorithm.
+The default Algorithm is the Kuhn–Munkres Algorithm since it is ensured that it delivers the optimal solution in a polynomial time. The Jonker-Volgenant Algorithm is currently under testing, since it has the potential to solve the problem with an sufficient accuarcy by having a lower computational complexity as the Kuhn–Munkres Algorithm.
 
 #### Mission Concept
 
@@ -45,7 +43,9 @@ The GUI was created to simplify the mission overview for the user during the com
 
 
 
-### Dependencies
+## Dependencies
+
+The software system us using external which needs to be installed to make the system run.
 
 Install Rospy for Pyton 3.6:
 
