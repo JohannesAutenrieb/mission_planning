@@ -8,6 +8,7 @@ import time
 from EnemyStatus import EnemyStatus
 from FriendStatus import FriendStatus
 from mission_planning.msg import TaskMessage, AgentInfo, SwarmInfo
+import os
 
 
 class TaskManager():
@@ -35,6 +36,15 @@ class TaskManager():
         self.taskList = []
         self.agentsList = []
         self.fooList = []
+        
+        # INITIAL OPEN OF LOG FILE
+        self.f = open(self.getRelativeFilePath("MissionPlan/TaskManagerLog.txt"), 'a')
+        
+    def __del__(self):
+        print(":::::::DECONSTRUCT TASK MANAGER")
+        # CLOSE LOG FILE AGAIN
+        self.f.close()  
+        print(":::::::LOG FILE IS CLOSED")
 #==========================================================================================================
 #                                  Database Part  
 #==========================================================================================================
@@ -199,6 +209,9 @@ class TaskManager():
 
         # current time taking
         currentTime = time.time()
+        
+        self.f.write("Task Manager data: %s:\n" % time.time())
+        self.f.write("TASKTYPE AGENT-ID REWARD DEADLINE PROGRESS-TIME:\n")
       
         # Loop over all tasks and check progess
         for task in self.taskStatusList:
@@ -206,10 +219,15 @@ class TaskManager():
            #Taking relevant time information
            timeOfAssignment = task.timestampOfTask
            taskDeadline = task.taskDeadline
+           progressTime= currentTime-timeOfAssignment
 
            if (task.taskType == 2) or (task.taskType == 8):
                # compute rewards
                currentReward = self.computeExecutionReward(task.currentPosition, task.wayPoint, task.initialPosition)
+               
+               # LOG OF REWARD
+               self.f.write("%d %d %6.4f %6.4f \n" % (task.agentId, task.taskType, currentReward, taskDeadline, progressTime))
+               
                if (0.9*task.lastReward > currentReward):
                    #Assign System Check task to trigger system Checkprocedure or land\restart
                    # SystemStatus True means it is officaly ok while False means it is not okay
@@ -218,6 +236,9 @@ class TaskManager():
                    setattr(task, 'lastReward', currentReward)
                print "T: [REWARD]Abort of Task ID: %d" % task.taskType
                print "T: [REWARD]Abort mission msg send to agent: %d" % task.agentId
+               #LOG
+               self.f.write("MISSION ABORTED[REWARD]:\n AGENT ID: %d TASK-Type: %d REWARD: %6.4f \n" % (task.agentId, task.taskType, currentReward))
+               
 
            if ((currentTime-timeOfAssignment) > taskDeadline):
                #Assign System Check task to trigger system Checkprocedure or land\restart
@@ -225,12 +246,15 @@ class TaskManager():
                self.sendAbortMessage(task.agentId, self.taskList)
 	       print "T: [TIMEOUT]Abort of Task ID: %d" % task.taskType
                print "T: [TIMEOUT]Abort mission msg send to agent: %d" % task.agentId
-#               setattr(task, 'lastReward', currentReward)
+               
+               #LOG
+               self.f.write("MISSION ABORTED[DEADLINE]:\n AGENT ID: %d TASK-Type: %d PROGRESS: %6.4f  DEADLIE: %6.4f \n" % (task.agentId, task.taskType, progressTime,taskDeadline))
    
                # Abort Mission if the system is not working 
            if not task.systemWorkingStatus:
                self.sendAbortMessage(task.agentId, self.taskList)
                print("T: [SYSTEMFAIL]Abort mission msg send to agent: ", task.agentId)
+               self.f.write("MISSION ABORTED[SYSTEM-FAIL]:\n AGENT ID: %d \n" % (task.agentId))
 
 	# print out for updqte
 	print("\nT: Rewards are updated for all tasks")
@@ -254,6 +278,11 @@ class TaskManager():
             #clear task lsit for next time step
             del self.taskList[:]
 
+    def getRelativeFilePath(self, relativePath):
+
+        scriptDir = os.path.dirname(__file__)
+        absFilePath = os.path.join(scriptDir, relativePath)
+        return absFilePath
    
 if __name__ == "__main__":
     print("T:: TASK MANAGER INITIALIZED ::")

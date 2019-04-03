@@ -6,12 +6,13 @@ from StageThree import MissionStageThree
 from EnemyStatus import EnemyStatus
 from FriendStatus import FriendStatus
 from Task import Task, TaskType
-from TaskAllocation_LAPJV import TaskAllocation_LAPJV
+from TaskAllocation_MAA import TaskAllocation_MAA
 from Agent import Agent
 from Enemy import Enemy
 import datetime
 import time
 import rospy
+import os
 from mission_planning.msg import TaskMessage,TargetInformation, SwarmInfo
 
 class MissionExecution():
@@ -44,7 +45,7 @@ class MissionExecution():
         self.mission = MissionStateMachine(self.obj)   
         self.stageOneState= MissionStageOne()
         self.stageThreeState= MissionStageThree()
-        self.taskAllocation = TaskAllocation_LAPJV()
+        self.taskAllocation = TaskAllocation_MAA()
         
         #Set up of initial state status (inital state one)
         self.StageOneCompleted =False
@@ -63,6 +64,15 @@ class MissionExecution():
         
         # Init of ROS Talker
         self.pub = rospy.Publisher('TaskAction', TaskMessage, queue_size=10)
+        
+        # INITIAL OPEN OF LOG FILE
+        self.f = open(self.getRelativeFilePath("MissionPlan/SwarmInfoLog.txt"), 'a')
+
+    def __del__(self):
+       print(":::::::DECONSTRUCT MAIN SYTSTEM")
+       # CLOSE LOG FILE AGAIN
+       self.f.close()
+       print(":::::::LOG FILE IS CLOSED")
 
     def callbackSwarmInfo(self, msg):
         """
@@ -77,6 +87,9 @@ class MissionExecution():
 
         # Extract friends information from message
         dataFriend = msg.friendlies
+        # WRITE TO FILE
+
+        self.f.write("Friend data %s:\n" % rospy.get_time())
 
         # Iter over list of messages
         for i in range(0, len(dataFriend)):
@@ -98,9 +111,19 @@ class MissionExecution():
                 setattr(self.agentsList[idx], 'taskStatus', dataFriend[i].agentTaskStatus)
                 setattr(self.agentsList[idx], 'agentBattery', dataFriend[i].agentBattery)
                 setattr(self.agentsList[idx], 'agentPayload', dataFriend[i].agentPayload)
+                
+                # LOGING FOR VERFICATION
+                self.f.write("Agent ID: %d \n" % dataFriend[i].agentId)
+                self.f.write("Position: %6.4f %6.4f %6.4f \n" % dataFriend[i].agentPosition)
+                self.f.write("Heading: %6.4f \n" % dataFriend[i].agentHeading)
+                self.f.write("Task ID: %d \n" % dataFriend[i].agentTaskId)
+                self.f.write("Task status %d \n" % dataFriend[i].agentTaskStatus)
+                self.f.write("Battery %3.2f \n" % dataFriend[i].agentBattery)
+                self.f.write("Working status %d \n\n" % dataFriend[i].agentWorkingStatus)
 
         # Extract foos information from message
         dataFoo = msg.enemies
+        self.f.write("Foo data %s:\n" % rospy.get_time())
 
         # Search for enemies from the current list that are not in the updated list and remove them
         idxToDelete = []
@@ -127,7 +150,13 @@ class MissionExecution():
                 setattr(self.fooList[idx], 'agentPos', dataFoo[i].agentPosition)
                 setattr(self.fooList[idx], 'agentVel', dataFoo[i].agentVelocity)
                 setattr(self.fooList[idx], 'confidence', dataFoo[i].confidence)
-
+                
+                # LOGING FOR LATER VERIFICATION
+                self.f.write("Agent ID: %d \n" % dataFoo[i].agentId)
+                self.f.write("Position: %6.4f %6.4f %6.4f \n" % dataFoo[i].agentPosition)
+                self.f.write("Velocity: %6.4f %6.4f %6.4f \n" % dataFoo[i].agentVelocity)
+                self.f.write("Confidence: %3.2f \n" % dataFoo[i].confidence)
+                
     def missionState(self):
         """
         	==============================================================
@@ -203,6 +232,15 @@ class MissionExecution():
             del self.taskList[:]
         # Wait for 1 sec before goig to next execution
         print "MS::Length of TaskList: %d" % len(self.taskList)
+
+
+    def getRelativeFilePath(self, relativePath):
+
+        scriptDir = os.path.dirname(__file__)
+        absFilePath = os.path.join(scriptDir, relativePath)
+        return absFilePath
+
+
 
 if __name__ == "__main__":
     """

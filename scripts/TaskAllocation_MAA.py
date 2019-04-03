@@ -2,6 +2,8 @@ import math
 from operator import itemgetter
 from Task import Task, TaskType
 from munkres import Munkres, print_matrix
+import os
+import time
 
 class TaskAllocation_MAA():
     def __init__(self):
@@ -11,6 +13,15 @@ class TaskAllocation_MAA():
         # ----------------------------------------------------------------------
 
         self.m = Munkres()
+        
+        # INITIAL OPEN OF LOG FILE
+        self.f = open(self.getRelativeFilePath("MissionPlan/TaskAllocationLog.txt"), 'a')
+
+    def __del__(self):
+        print(":::::::DECONSTRUCT TASK ALLOCATION")
+        # CLOSE LOG FILE AGAIN
+        self.f.close()  
+        print(":::::::LOG FILE IS CLOSED")
     
     def TaskAssignment(self, agentsList, fooList):
 
@@ -67,6 +78,12 @@ class TaskAllocation_MAA():
         #----------------------------------------------------------------------
         print("S2: Allocating tasks... ")
         # loop over all target drones
+        
+        # LOGING FOR VERFICATION
+        
+        self.f.write("Task allocation data: %s:\n" % time.time())
+        self.f.write("Enemy Friend Cost:\n")
+        
         for enemy in fooList:
             if (enemy.confidence > 0.7) and (enemy.attackStatus is False):
 
@@ -83,6 +100,8 @@ class TaskAllocation_MAA():
                         
                         costEnemy.append(currentCost)
                         deadlineList.append(deadline)
+                        # LOGING FOR VERFICATION
+                        self.f.write("%d %d %6.4f \n" % (enemy.agentId, friend.agentId, currentCost))
 
                 # Append cost values value to the matrix
                 costMatrix.append(costEnemy)
@@ -103,6 +122,11 @@ class TaskAllocation_MAA():
         # Add chose friend to index list and add target position as waypoint
         # closestFriendIdx = int(closestFriendIdx)
         print("S2:: Task assignment ::")
+        
+        # LOGING FOR VERFICATION
+        self.f.write("Task assignments:")
+
+
         for row, column in indexes:
             friendIdx = row
             enemyIdx = column
@@ -119,6 +143,9 @@ class TaskAllocation_MAA():
             setattr(fooList[enemyIdx], 'attackStatus', True)
             setattr(fooList[enemyIdx], 'attackingAgent', friendId)
             print("Agent: ", friendId, "attacks foo: ", enemyId)
+            
+            #LOGING FOR VERFICATION
+            self.f.write("Agent: %d attacks foo: %d \n" % (friendId, enemyId))
 
         print('-------------------------------------')
         print("S2: Attack status:")
@@ -132,8 +159,19 @@ class TaskAllocation_MAA():
         foosPreferences.clear()
         friendsPreferences.clear()
         deadlineDict.clear()
+        
 
+        
         return agentsWithTask, attackedTargets, attackWaypoint, estimatedDeadline
+    
+    
+    def getRelativeFilePath(self, relativePath):
+
+        scriptDir = os.path.dirname(__file__)
+        absFilePath = os.path.join(scriptDir, relativePath)
+        return absFilePath
+    
+    
     #=================================================
     #
     # More Paramter for cost to follow
