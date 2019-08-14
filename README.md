@@ -72,7 +72,7 @@ Next Step is to clone this github repository and use it as a new package:
 
 	$  git clone https://github.com/JohannesAutenrieb/mission_planning.git ./src/mission_planning
 
-The system is build is with:
+The system is build with:
 	
 	#Building all ROS packages
 	$  catkin_make
